@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>GSD — My Fleet Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--gold-bright:#F0C040;--gold-dim:#8B6914;--gold-glow:rgba(201,168,76,0.1);
+  --black:#090909;--surface:#111;--s2:#1A1A1A;--s3:#222;--s4:#2C2C2C;
+  --border:rgba(255,255,255,0.07);--bg:rgba(201,168,76,0.25);
+  --text:#F0EBE0;--t2:#9A9080;--t3:#4A4540;
+  --green:#27AE60;--gd:rgba(39,174,96,0.15);--gb:rgba(39,174,96,0.35);
+  --red:#E74C3C;--rd:rgba(231,76,60,0.12);--rb:rgba(231,76,60,0.35);
+  --orange:#E67E22;--od:rgba(230,126,34,0.12);--ob:rgba(230,126,34,0.35);
+  --blue:#2980B9;--bd:rgba(41,128,185,0.12);--bb:rgba(41,128,185,0.35);
+  --fd:'Bebas Neue',sans-serif;--fb:'Inter',sans-serif;--fm:'DM Mono',monospace;--r:6px;
+}
+html,body{height:100%;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--fb);background:var(--black);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+input,textarea,select,button{font-family:var(--fb);-webkit-appearance:none}
+.screen{display:none;min-height:100dvh;flex-direction:column}.screen.active{display:flex}
+
+/* LOGIN */
+#s-login{align-items:center;justify-content:center;padding:32px 20px;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.06),transparent 60%)}
+.lw{width:100%;max-width:360px}
+.l-logo{font-family:var(--fd);font-size:3rem;color:var(--gold);letter-spacing:5px;text-align:center;line-height:1}
+.l-tag{font-family:var(--fm);font-size:0.58rem;letter-spacing:4px;text-transform:uppercase;color:var(--t3);text-align:center;margin:4px 0 32px}
+.ltabs{display:flex;background:var(--s2);border-radius:var(--r);overflow:hidden;margin-bottom:22px;border:1px solid var(--border)}
+.ltab{flex:1;padding:11px;text-align:center;font-size:0.8rem;font-weight:600;cursor:pointer;color:var(--t2);transition:all .2s}
+.ltab.active{background:var(--gold);color:var(--black)}
+.fl{margin-bottom:14px}
+.fl label{display:block;font-size:0.67rem;font-weight:700;color:var(--t2);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+.fi{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;font-size:0.9rem;color:var(--text);outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--gold)}
+.btn-l{width:100%;padding:13px;background:var(--gold);color:var(--black);border:none;border-radius:var(--r);font-size:0.92rem;font-weight:700;cursor:pointer;margin-top:4px}
+.btn-l:active{transform:scale(.98)}
+.l-demo{font-size:0.68rem;color:var(--t3);text-align:center;margin-top:14px;line-height:1.7}
+.l-demo span{color:var(--gold);font-family:var(--fm)}
+
+/* SHELL */
+.ah{background:var(--surface);border-bottom:1px solid var(--bg);padding:0 16px;height:54px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:100}
+.al{font-family:var(--fd);font-size:1.3rem;color:var(--gold);letter-spacing:3px}
+.ar2{font-family:var(--fm);font-size:0.55rem;color:var(--t3);letter-spacing:2px;margin-top:1px}
+.btn-lo{background:none;border:1px solid var(--border);color:var(--t2);padding:5px 10px;border-radius:var(--r);font-size:0.7rem;cursor:pointer}
+.nav{background:var(--surface);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;flex-shrink:0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nt{padding:11px 13px;font-size:0.72rem;font-weight:600;color:var(--t2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;flex-shrink:0}
+.nt.active{color:var(--gold);border-bottom-color:var(--gold)}
+.ab{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch}
+.pg{display:none}.pg.active{display:block}
+
+/* CARDS */
+.card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.cg{border-color:var(--bg)}
+.card+.card,.card+.mc,.mc+.card,.mc+.mc{margin-top:10px}
+.mc{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.fb{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}.mb20{margin-bottom:20px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}
+.ey{font-family:var(--fm);font-size:0.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--t3)}
+.st{font-family:var(--fd);font-size:1.6rem;color:var(--gold);letter-spacing:2px;line-height:1}
+.ss{font-size:0.78rem;color:var(--t2);margin-top:3px}
+.kv{font-family:var(--fd);font-size:2rem;color:var(--gold);letter-spacing:1px;line-height:1}
+.kl{font-size:0.68rem;color:var(--t2);margin-top:4px;font-family:var(--fm)}
+.div{height:1px;background:var(--border);margin:14px 0}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:8px 14px;border-radius:var(--r);font-size:0.78rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.97)}
+.bg{background:var(--gold);color:var(--black)}
+.bo{background:transparent;border:1px solid var(--bg);color:var(--gold)}
+.bgh{background:transparent;border:1px solid var(--border);color:var(--t2)}
+.bre{background:var(--rd);border:1px solid var(--rb);color:var(--red)}
+.bgr{background:var(--gd);border:1px solid var(--gb);color:var(--green)}
+.bbl{background:var(--bd);border:1px solid var(--bb);color:var(--blue)}
+.bor{background:var(--od);border:1px solid var(--ob);color:var(--orange)}
+.bsm{padding:5px 10px;font-size:0.7rem}
+.bfl{width:100%}
+
+/* FORMS */
+.fr{margin-bottom:13px}
+.fr label{display:block;font-size:0.67rem;font-weight:700;color:var(--t2);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+.fr input,.fr textarea,.fr select{width:100%;background:var(--s3);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;font-size:0.87rem;color:var(--text);outline:none;transition:border-color .2s}
+.fr input:focus,.fr textarea:focus,.fr select:focus{border-color:var(--gold)}
+.fr textarea{resize:vertical;min-height:72px}
+.fr select option{background:var(--s3)}
+.fa{display:flex;gap:8px;margin-top:16px}
+
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:flex-end;justify-content:center}
+.mo.open{display:flex}
+@media(min-width:600px){.mo{align-items:center}}
+.md{background:var(--s2);border:1px solid var(--bg);border-radius:12px 12px 0 0;width:100%;max-width:520px;max-height:92dvh;overflow-y:auto;padding:20px;position:relative;animation:su .22s ease}
+@media(min-width:600px){.md{border-radius:12px}}
+@keyframes su{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.mt2{font-family:var(--fd);font-size:1.3rem;color:var(--gold);letter-spacing:2px;margin-bottom:3px}
+.ms{font-size:0.78rem;color:var(--t2);margin-bottom:16px}
+.mx{position:absolute;top:14px;right:14px;background:var(--s3);border:1px solid var(--border);color:var(--t2);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center}
+
+/* PILLS */
+.pi{display:inline-block;font-size:0.62rem;font-weight:700;padding:3px 8px;border-radius:3px;font-family:var(--fm);letter-spacing:.5px}
+.pn{background:var(--od);color:var(--orange);border:1px solid var(--ob)}
+.pw{background:var(--gd);color:var(--green);border:1px solid var(--gb)}
+.pd{background:var(--rd);color:var(--red);border:1px solid var(--rb)}
+.pr{background:var(--bd);color:var(--blue);border:1px solid var(--bb)}
+.pp{background:var(--od);color:var(--orange)}
+.pa{background:var(--gd);color:var(--green)}
+.pc{background:rgba(39,174,96,0.2);color:var(--green)}
+.pde{background:var(--rd);color:var(--red)}
+.pak{background:var(--gd);color:var(--green)}
+.pgr{background:rgba(255,255,255,0.05);color:var(--t2)}
+
+/* VEHICLE GRID */
+.vg{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;margin-top:12px}
+.vc{background:var(--s3);border:2px solid var(--border);border-radius:var(--r);padding:12px;cursor:pointer;transition:all .18s;position:relative}
+.vc:active{transform:scale(.97)}
+.vc.needs_cleaning{border-color:var(--orange);background:var(--od)}
+.vc.can_wait{border-color:var(--green);background:var(--gd)}
+.vc.cleaning_done{border-color:var(--green);background:rgba(39,174,96,.07)}
+.vct{font-family:var(--fm);font-size:.55rem;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
+.vci{font-family:var(--fd);font-size:1.3rem;color:var(--gold);letter-spacing:1px;line-height:1}
+.vcp{font-family:var(--fm);font-size:.62rem;color:var(--t2);margin-top:2px}
+.vbs{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
+.vb{font-size:.55rem;padding:2px 5px;border-radius:2px;font-family:var(--fm)}
+
+/* CLIENT ROW */
+.cr{background:var(--s3);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;margin-bottom:8px}
+.cr:active{opacity:.8}
+.ca{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--gold));display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:1.1rem;color:var(--black);flex-shrink:0}
+.ci{flex:1;min-width:0}
+.cn2{font-size:.9rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cm{font-family:var(--fm);font-size:.6rem;color:var(--t3);margin-top:2px}
+.cf{text-align:right;flex-shrink:0}
+.cfn{font-family:var(--fd);font-size:1.4rem;line-height:1}
+.cfl{font-size:.6rem;color:var(--t3);font-family:var(--fm)}
+
+/* ITEM CARDS */
+.ic{background:var(--s3);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.ic.dmg{border-left:3px solid var(--red)}
+.ic.req{border-left:3px solid var(--blue)}
+.ic.ack{border-left:3px solid var(--green)}
+.ic.done{border-left:3px solid var(--green);opacity:.75}
+.ih{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.it{font-size:.88rem;font-weight:600}
+.im{font-family:var(--fm);font-size:.6rem;color:var(--t3);margin-top:2px}
+.ib{font-size:.83rem;color:var(--t2);line-height:1.6}
+.ips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.iph{width:56px;height:56px;border-radius:4px;object-fit:cover;cursor:pointer;border:1px solid var(--border)}
+.ia{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+
+/* PHOTO */
+.pz{border:2px dashed var(--bg);border-radius:var(--r);text-align:center;cursor:pointer;background:var(--s3);margin-top:6px;position:relative;overflow:hidden;-webkit-tap-highlight-color:rgba(201,168,76,0.2)}
+.pz:active{background:rgba(201,168,76,0.12);border-color:var(--gold)}
+.pz-inner{padding:22px 14px;pointer-events:none}
+.pz input[type=file]{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;font-size:16px}
+.pzi{font-size:1.8rem;margin-bottom:4px}
+.pzt{font-size:.8rem;color:var(--t2)}
+.ppg{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px;margin-top:10px}
+.pp2{position:relative;aspect-ratio:1;border-radius:4px;overflow:hidden;background:var(--s3)}
+.pp2 img{width:100%;height:100%;object-fit:cover}
+.prm{position:absolute;top:2px;right:2px;width:20px;height:20px;background:rgba(0,0,0,.75);border:none;border-radius:50%;color:white;font-size:.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* MARK BTNS */
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.mk{padding:11px 8px;border-radius:var(--r);border:2px solid;cursor:pointer;text-align:center;font-size:.76rem;font-weight:700;transition:all .2s;background:transparent;font-family:var(--fb)}
+.mk:active{transform:scale(.97)}
+.mko{border-color:var(--orange);color:var(--orange)}.mko.sel{background:var(--od)}
+.mkg{border-color:var(--green);color:var(--green)}.mkg.sel{background:var(--gd)}
+.mkb{border-color:var(--blue);color:var(--blue)}.mkb.sel{background:var(--bd)}
+.mkx{border-color:var(--t3);color:var(--t3)}
+
+/* VEHICLE DETAIL */
+.vdr{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+.vdr:last-child{border-bottom:none}
+.vdl{font-size:.7rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px}
+.vdv{font-size:.87rem;color:var(--text);font-family:var(--fm)}
+
+/* PROFILE */
+.prf-hero{background:linear-gradient(135deg,var(--s2),rgba(201,168,76,.06));border:1px solid var(--bg);border-radius:var(--r);padding:20px;margin-bottom:14px;text-align:center}
+.prf-av{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--gold));display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:2rem;color:var(--black);margin:0 auto 10px}
+.prf-name{font-family:var(--fd);font-size:1.4rem;color:var(--gold);letter-spacing:2px}
+.prf-meta{font-size:.78rem;color:var(--t2);margin-top:4px}
+.pay-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+.pay-row:last-child{border-bottom:none}
+.pay-label{font-size:.85rem;color:var(--text)}
+.pay-amt{font-family:var(--fm);font-weight:700;color:var(--gold)}
+.pay-date{font-family:var(--fm);font-size:.68rem;color:var(--t3);margin-top:2px}
+.hist-row{padding:10px 0;border-bottom:1px solid var(--border)}
+.hist-row:last-child{border-bottom:none}
+.hist-date{font-family:var(--fm);font-size:.68rem;color:var(--t3)}
+.hist-svc{font-size:.85rem;font-weight:600;margin-top:2px}
+.hist-detail{font-size:.78rem;color:var(--t2);margin-top:2px}
+
+/* ALERT ROW */
+.ar{background:var(--s3);border:1px solid var(--border);border-radius:var(--r);padding:12px;display:flex;gap:10px;margin-bottom:8px;align-items:center}
+.ard{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.art{font-size:.84rem;font-weight:600}
+.arm{font-family:var(--fm);font-size:.6rem;color:var(--t3);margin-top:2px}
+
+/* LEGEND */
+.leg{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.li{display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--t2)}
+.ld{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+
+/* EMPTY */
+.emp{text-align:center;padding:36px 20px;color:var(--t3)}
+.ei{font-size:2.2rem;margin-bottom:8px}
+.et{font-size:.83rem;line-height:1.6}
+
+/* SETTINGS */
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
+.set-row:last-child{border-bottom:none}
+.act-entry{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.act-time{font-family:var(--fm);font-size:.6rem;color:var(--t3);flex-shrink:0;min-width:78px;padding-top:2px}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--s2);border:1px solid var(--bg);color:var(--text);padding:9px 18px;border-radius:20px;font-size:.8rem;font-weight:500;z-index:9999;transition:transform .28s ease;pointer-events:none;white-space:nowrap;max-width:88vw}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:var(--gb);color:var(--green)}
+.toast.err{border-color:var(--rb);color:var(--red)}
+@media(max-width:480px){.g4{grid-template-columns:1fr 1fr}.vg{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}.ab{padding:12px}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="screen active" id="s-login">
+<div class="lw">
+  <div class="l-logo">✦ GSD</div>
+  <div class="l-tag">My Fleet Portal</div>
+  <div class="ltabs">
+    <div class="ltab active" onclick="ltab('admin',this)">Admin</div>
+    <div class="ltab" onclick="ltab('client',this)">Client</div>
+  </div>
+  <div id="lf-a">
+    <div class="fl"><label>Admin Password</label><input class="fi" type="password" id="ap" placeholder="Enter password" onkeydown="if(event.key==='Enter')loginA()"></div>
+    <button class="btn-l" onclick="loginA()">Sign In as Admin</button>
+  </div>
+  <div id="lf-c" style="display:none">
+    <div class="fl"><label>Client Code</label><input class="fi" type="text" id="cc" placeholder="Your client code" autocomplete="off" onkeydown="if(event.key==='Enter')loginC()"></div>
+    <button class="btn-l" onclick="loginC()">Access My Fleet</button>
+  </div>
+</div>
+</div>
+
+<!-- ADMIN -->
+<div class="screen" id="s-admin">
+  <div class="ah">
+    <div><div class="al">✦ GSD</div><div class="ar2">Admin · Christ Pierre</div></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="btn-lo" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+  <div class="nav" id="anav">
+    <div class="nt active" onclick="ap('dash',this)">⚡ Dashboard</div>
+    <div class="nt" onclick="ap('clients',this)">👥 Clients</div>
+    <div class="nt" onclick="ap('requests',this)">📋 Requests</div>
+    <div class="nt" onclick="ap('damages',this)">🛡 Damages</div>
+    <div class="nt" onclick="ap('settings',this)">⚙️ Settings</div>
+  </div>
+  <div class="ab">
+
+    <!-- DASHBOARD -->
+    <div class="pg active" id="ap-dash">
+      <div class="ey mb8">Overview</div><div class="st mb12">COMMAND CENTER</div>
+      <div class="g4 mb16" id="a-kpis"></div>
+      <div class="card cg mb12">
+        <div style="font-weight:700;font-size:.88rem;margin-bottom:12px">🔴 Active Alerts</div>
+        <div id="a-ap"></div>
+      </div>
+      <div class="card">
+        <div class="fb mb12"><div style="font-weight:700;font-size:.88rem">Pending Requests</div><button class="btn bo bsm" onclick="ap('requests',null)">See All</button></div>
+        <div id="a-rp"></div>
+      </div>
+    </div>
+
+    <!-- CLIENTS LIST -->
+    <div class="pg" id="ap-clients">
+      <div class="fb mb16">
+        <div><div class="ey">Fleet Accounts</div><div class="st">CLIENTS</div></div>
+        <button class="btn bg" onclick="openM('m-add-client')">+ Add Client</button>
+      </div>
+      <div id="a-cl"></div>
+    </div>
+
+    <!-- CLIENT DETAIL -->
+    <div class="pg" id="ap-cd">
+      <div class="fb mb16">
+        <div>
+          <button class="btn bgh bsm mb8" onclick="ap('clients',null)">← Back</button>
+          <div class="ey" id="cd-ey"></div><div class="st" id="cd-t"></div><div class="ss" id="cd-s"></div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn bg bsm" onclick="openM('m-av-a')">+ Vehicle</button>
+          <button class="btn bo bsm" onclick="openM('m-log-dmg-a')">+ Damage</button>
+          <button class="btn bgh bsm" onclick="openEditClient()">Edit</button>
+        </div>
+      </div>
+      <div class="g4 mb12" id="cd-kpis"></div>
+      <div class="card mb12">
+        <div class="fb mb8"><div style="font-weight:700;font-size:.88rem">Fleet Vehicles</div><div id="cd-fc" style="font-family:var(--fm);font-size:.7rem;color:var(--t2)"></div></div>
+        <div class="leg">
+          <div class="li"><div class="ld" style="background:var(--orange)"></div>Needs Cleaning</div>
+          <div class="li"><div class="ld" style="background:var(--green)"></div>Can Wait/Clean</div>
+          <div class="li"><div class="ld" style="background:var(--red)"></div>Damage</div>
+        </div>
+        <div class="vg" id="cd-v"></div>
+      </div>
+      <div class="card mb12"><div class="fb mb12"><div style="font-weight:700;font-size:.88rem">Damage Reports</div></div><div id="cd-d"></div></div>
+      <div class="card"><div class="fb mb12"><div style="font-weight:700;font-size:.88rem">Extra Work Requests</div></div><div id="cd-r"></div></div>
+    </div>
+
+<!-- REQUESTS -->
+    <div class="pg" id="ap-requests">
+      <div class="ey mb8">Outside Scope</div><div class="st mb16">EXTRA WORK REQUESTS</div>
+      <div id="a-req"></div>
+    </div>
+
+    <!-- DAMAGES -->
+    <div class="pg" id="ap-damages">
+      <div class="ey mb8">Pre-Existing</div><div class="st mb16">DAMAGE LOG</div>
+      <div id="a-dmg"></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="pg" id="ap-settings">
+      <div class="ey mb8">Admin Control</div><div class="st mb16">SITE SETTINGS</div>
+      <div class="card cg mb12">
+        <div style="font-weight:700;font-size:.9rem;margin-bottom:12px">🔐 Admin Password</div>
+        <div class="fr"><label>Current Password</label><input type="password" id="scp" placeholder="Current password"></div>
+        <div class="fr"><label>New Password</label><input type="password" id="snp" placeholder="New password"></div>
+        <div class="fr"><label>Confirm New</label><input type="password" id="scp2" placeholder="Confirm"></div>
+        <button class="btn bg bsm" onclick="chgPass()">Update Password</button>
+      </div>
+      <div class="card mb12">
+        <div style="font-weight:700;font-size:.9rem;margin-bottom:4px">🚦 Client Access Control</div>
+        <div style="font-size:.78rem;color:var(--t2);margin-bottom:14px">Enable or disable each client's portal access</div>
+        <div id="s-ac"></div>
+      </div>
+      <div class="card mb12">
+        <div style="font-weight:700;font-size:.9rem;margin-bottom:4px">🗝 Client Login Codes</div>
+        <div style="font-size:.78rem;color:var(--t2);margin-bottom:12px">Share these codes with clients to log in</div>
+        <div id="s-codes"></div>
+      </div>
+      <div class="card mb12">
+        <div style="font-weight:700;font-size:.9rem;margin-bottom:4px">📋 Site Activity Log</div>
+        <div style="font-size:.78rem;color:var(--t2);margin-bottom:12px">All logins, actions, and changes</div>
+        <div id="s-log" style="max-height:300px;overflow-y:auto"></div>
+      </div>
+      <div class="card" style="border-color:var(--rb)">
+        <div style="font-weight:700;font-size:.9rem;color:var(--red);margin-bottom:4px">⚠️ Data Management</div>
+        <div style="font-size:.78rem;color:var(--t2);margin-bottom:12px">Export or reset portal data</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn bgh bsm" onclick="exportData()">📥 Export JSON</button>
+          <button class="btn bre bsm" onclick="resetPortal()">🗑 Reset All Data</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CLIENT -->
+<div class="screen" id="s-client">
+  <div class="ah">
+    <div><div class="al">✦ GSD</div><div class="ar2" id="cl-role"></div></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="font-size:.78rem;font-weight:600;color:var(--t2);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="cl-nm"></div>
+      <button class="btn-lo" onclick="logout()">Out</button>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="nt active" onclick="cp('fleet',this)">My Fleet</div>
+    <div class="nt" onclick="cp('profile',this)">Profile</div>
+    <div class="nt" onclick="cp('damages',this)">Damages</div>
+    <div class="nt" onclick="cp('history',this)">History</div>
+  </div>
+  <div class="ab">
+
+    <!-- CLIENT FLEET -->
+    <div class="pg active" id="cp-fleet">
+      <div class="fb mb12">
+        <div><div class="ey">Your Fleet</div><div class="st" id="cl-ft"></div><div class="ss" id="cl-fs"></div></div>
+        <button class="btn bo bsm" onclick="openM('m-av-c')">+ Add</button>
+      </div>
+      <div class="leg">
+        <div class="li"><div class="ld" style="background:var(--orange)"></div>Needs Cleaning</div>
+        <div class="li"><div class="ld" style="background:var(--green)"></div>Can Wait</div>
+        <div class="li"><div class="ld" style="background:var(--red)"></div>Damage</div>
+        <div class="li"><div class="ld" style="background:var(--blue)"></div>Request</div>
+      </div>
+      <div class="vg" id="cl-vg"></div>
+    </div>
+
+    <!-- CLIENT PROFILE -->
+    <div class="pg" id="cp-profile">
+      <div class="prf-hero" id="cl-prf-hero">
+        <div class="prf-av" id="cl-prf-av">?</div>
+        <div class="prf-name" id="cl-prf-name"></div>
+        <div class="prf-meta" id="cl-prf-meta"></div>
+        <button class="btn bo bsm mt8" onclick="openM('m-edit-client-c')">✏️ Edit Info</button>
+      </div>
+      <!-- Service Agreement -->
+      <div class="card mb12">
+        <div style="font-weight:700;font-size:.9rem;margin-bottom:12px">📄 Service Agreement</div>
+        <div id="cl-agreement"></div>
+      </div>
+      <!-- Upcoming Payment -->
+      <div class="card mb12">
+        <div style="font-weight:700;font-size:.9rem;margin-bottom:12px">💳 Upcoming Payments</div>
+        <div id="cl-upcoming"></div>
+      </div>
+      <!-- Payment History -->
+      <div class="card mb12">
+        <div style="font-weight:700;font-size:.9rem;margin-bottom:12px">🧾 Payment History</div>
+        <div id="cl-pay-hist"></div>
+      </div>
+    </div>
+
+    <!-- CLIENT DAMAGES -->
+    <div class="pg" id="cp-damages">
+      <div class="fb mb16">
+        <div><div class="ey">Pre-Existing</div><div class="st">DAMAGE LOG</div></div>
+        <button class="btn bg" onclick="openM('m-log-dmg-c')">+ Report</button>
+      </div>
+      <div id="cl-dmg"><div class="emp"><div class="ei">🛡️</div><div class="et">No damage reports yet.</div></div></div>
+    </div>
+
+    <!-- CLIENT HISTORY — unified: service, payments, requests -->
+    <div class="pg" id="cp-history">
+      <div class="ey mb8">All Activity</div><div class="st mb16">HISTORY</div>
+
+      <!-- Service History -->
+      <div class="card mb12">
+        <div style="font-weight:700;font-size:.9rem;margin-bottom:12px">🛠 Service History</div>
+        <div id="cl-svc-hist2"><div style="color:var(--t3);font-size:.82rem">No service history yet</div></div>
+      </div>
+
+      <!-- Payment History -->
+      <div class="card">
+        <div style="font-weight:700;font-size:.9rem;margin-bottom:12px">💳 Payment History</div>
+        <div id="cl-pay-hist2"><div style="color:var(--t3);font-size:.82rem">No payments on record yet</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+
+<!-- Vehicle Modal (view/edit/mark) -->
+<div class="mo" id="m-v"><div class="md">
+  <button class="mx" onclick="closeM('m-v')">✕</button>
+  <div class="mt2" id="mv-id">Vehicle</div>
+  <div class="ms" id="mv-tp"></div>
+  <div style="background:var(--s3);border-radius:var(--r);padding:12px;margin-bottom:12px" id="mv-info">
+    <div class="vdr"><span class="vdl">Vehicle ID</span><span class="vdv" id="mv-vid2"></span></div>
+    <div class="vdr"><span class="vdl">Plate</span><span class="vdv" id="mv-plt"></span></div>
+    <div class="vdr"><span class="vdl">Type</span><span class="vdv" id="mv-typ2"></span></div>
+    <div class="vdr"><span class="vdl">Notes</span><span class="vdv" id="mv-nt2" style="font-family:var(--fb);font-size:.82rem;color:var(--t2)"></span></div>
+  </div>
+  <div id="mv-edit-btn" style="margin-bottom:12px;display:flex;gap:6px">
+    <button class="btn bgh bsm" onclick="openEditVehicle()">✏️ Edit Vehicle Info</button>
+    <button class="btn bre bsm" id="mv-rm" onclick="removeV()">🗑 Remove</button>
+  </div>
+  <div class="div"></div>
+  <div style="font-size:.72rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Mark Status</div>
+  <div class="mg">
+    <button class="mk mko" id="mk-n" onclick="setVS('needs_cleaning')">🧹 Needs Cleaning</button>
+    <button class="mk mkg" id="mk-w" onclick="setVS('can_wait')">✓ Can Wait</button>
+  </div>
+  <div class="mg mt8">
+    <button class="mk mkb" id="mk-d" onclick="setVS('cleaning_done')">✅ Mark Clean</button>
+    <button class="mk mkx" onclick="setVS('no_status')">◯ Clear</button>
+  </div>
+  <div class="div"></div>
+  <div style="font-size:.72rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Problem Area Photos</div>
+  <div class="pz"><div class="pz-inner"><div class="pzi">📷</div><div class="pzt">Tap to add photos</div></div><input type="file" accept="image/*" multiple onchange="addP('v',this)"></div>
+  <div class="ppg" id="vpp"></div>
+  <div class="div"></div>
+  <div style="font-size:.72rem;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Quick: Request Extra Work</div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <select id="mv-req-typ" style="flex:1;background:var(--s3);border:1px solid var(--border);border-radius:var(--r);padding:9px 12px;font-size:.85rem;color:var(--text);outline:none;min-width:160px">
+      <option value="">— Select service —</option>
+      <option>Exterior Wash</option>
+      <option>Full Detail (Interior + Exterior)</option>
+      <option>Seat Deep Clean</option>
+      <option>Headlight Restoration</option>
+      <option>Engine Bay Clean</option>
+      <option>Odor Elimination</option>
+      <option>Stain Removal</option>
+      <option>Other</option>
+    </select>
+    <button class="btn bbl bsm" onclick="quickRequest()">Request</button>
+  </div>
+  <textarea id="mv-req-note" placeholder="Optional note for this request..." style="width:100%;background:var(--s3);border:1px solid var(--border);border-radius:var(--r);padding:9px 12px;font-size:.85rem;color:var(--text);outline:none;margin-top:8px;resize:none;height:58px"></textarea>
+  <div class="div"></div><textarea id="mv-notes" placeholder="Special instructions, notes..."></textarea></div>
+  <div class="fa">
+    <button class="btn bgh" style="flex:0 0 80px" onclick="closeM('m-v')">Cancel</button>
+    <button class="btn bg" style="flex:1" onclick="saveV()">Save</button>
+  </div>
+</div></div>
+
+<!-- Edit Vehicle Info -->
+<div class="mo" id="m-ev"><div class="md">
+  <button class="mx" onclick="closeM('m-ev')">✕</button>
+  <div class="mt2">EDIT VEHICLE</div>
+  <div class="ms">Update vehicle information</div>
+  <div class="fr"><label>Vehicle ID / Unit #</label><input type="text" id="ev-id" placeholder="e.g. EV12, VAN-07"></div>
+  <div class="fr"><label>License Plate</label><input type="text" id="ev-plt" placeholder="e.g. ABC-1234" style="text-transform:uppercase"></div>
+  <div class="fr"><label>Vehicle Type</label>
+    <select id="ev-typ">
+      <option>EDV — Amazon Electric Delivery Vehicle</option>
+      <option>XL — Amazon Standard Delivery Van</option>
+      <option>Box Truck</option><option>Sprinter Van</option><option>Cargo Van</option>
+      <option>Pickup Truck</option><option>Semi / Tractor</option><option>Other</option>
+    </select>
+  </div>
+  <div class="fr"><label>Notes</label><input type="text" id="ev-nt" placeholder="Special instructions, notes..."></div>
+  <div class="fa">
+    <button class="btn bgh" onclick="closeM('m-ev')">Cancel</button>
+    <button class="btn bg" style="flex:1" onclick="saveEditV()">Save Changes</button>
+  </div>
+</div></div>
+
+<!-- Add Vehicle Admin -->
+<div class="mo" id="m-av-a"><div class="md">
+  <button class="mx" onclick="closeM('m-av-a')">✕</button>
+  <div class="mt2">ADD VEHICLE</div>
+  <div class="ms" id="m-av-a-sub">Adding to fleet</div>
+  <div class="fr"><label>Vehicle ID / Unit #</label><input type="text" id="ava-id" placeholder="e.g. EV12, VAN-07, TRUCK-3"></div>
+  <div class="fr"><label>License Plate</label><input type="text" id="ava-plt" placeholder="e.g. ABC-1234" style="text-transform:uppercase"></div>
+  <div class="fr"><label>Vehicle Type</label>
+    <select id="ava-typ">
+      <option>EDV — Amazon Electric Delivery Vehicle</option>
+      <option>XL — Amazon Standard Delivery Van</option>
+      <option>Box Truck</option><option>Sprinter Van</option><option>Cargo Van</option>
+      <option>Pickup Truck</option><option>Semi / Tractor</option><option>Other</option>
+    </select>
+  </div>
+  <div class="fr"><label>Notes</label><input type="text" id="ava-nt" placeholder="Special instructions, notes..."></div>
+  <div class="fa">
+    <button class="btn bgh" onclick="closeM('m-av-a')">Cancel</button>
+    <button class="btn bg" style="flex:1" onclick="addVA()">Add Vehicle</button>
+  </div>
+</div></div>
+
+<!-- Add Vehicle Client -->
+<div class="mo" id="m-av-c"><div class="md">
+  <button class="mx" onclick="closeM('m-av-c')">✕</button>
+  <div class="mt2">ADD VEHICLE</div>
+  <div class="ms">Add a vehicle to your fleet</div>
+  <div class="fr"><label>Vehicle ID / Unit #</label><input type="text" id="avc-id" placeholder="e.g. EV12, VAN-07"></div>
+  <div class="fr"><label>License Plate</label><input type="text" id="avc-plt" placeholder="e.g. ABC-1234" style="text-transform:uppercase"></div>
+  <div class="fr"><label>Vehicle Type</label>
+    <select id="avc-typ">
+      <option>EDV — Amazon Electric Delivery Vehicle</option>
+      <option>XL — Amazon Standard Delivery Van</option>
+      <option>Box Truck</option><option>Sprinter Van</option><option>Cargo Van</option>
+      <option>Pickup Truck</option><option>Semi / Tractor</option><option>Other</option>
+    </select>
+  </div>
+  <div class="fr"><label>Notes</label><input type="text" id="avc-nt" placeholder="Special instructions, notes..."></div>
+  <div class="fa">
+    <button class="btn bgh" onclick="closeM('m-av-c')">Cancel</button>
+    <button class="btn bg" style="flex:1" onclick="addVC()">Add Vehicle</button>
+  </div>
+</div></div>
+
+<!-- Add Client -->
+<div class="mo" id="m-add-client"><div class="md">
+  <button class="mx" onclick="closeM('m-add-client')">✕</button>
+  <div class="mt2">ADD CLIENT</div><div class="ms">Create a new fleet client account</div>
+  <div class="fr"><label>Company Name</label><input type="text" id="ac-nm" placeholder="e.g. MVP Logistics LLC"></div>
+  <div class="fr"><label>Contact Name</label><input type="text" id="ac-ct" placeholder="Fleet manager or owner name"></div>
+  <div class="fr"><label>Phone</label><input type="tel" id="ac-ph" placeholder="(732) 000-0000"></div>
+  <div class="fr"><label>Email</label><input type="email" id="ac-em" placeholder="fleet@company.com"></div>
+  <div class="fr"><label>Client Login Code</label><input type="text" id="ac-cd" placeholder="e.g. MVP001, FLEET01" style="text-transform:uppercase"></div>
+  <div class="fr"><label>Contract Type</label>
+    <select id="ac-co">
+      <option>Bi-Weekly Interior Only — $35.75/vehicle</option>
+      <option>Bi-Weekly Interior + Exterior — $45/vehicle</option>
+      <option>Monthly Interior Only — $45/vehicle</option>
+      <option>Monthly Interior + Exterior — $60/vehicle</option>
+      <option>One-Time + Monthly Retainer — $500/mo (20 vehicles)</option>
+      <option>Custom</option>
+    </select>
+  </div>
+  <div class="fr"><label>Monthly Rate ($)</label><input type="number" id="ac-rt" placeholder="e.g. 700.00"></div>
+  <div class="fr"><label>Next Payment Due</label><input type="date" id="ac-pd"></div>
+  <div class="fa">
+    <button class="btn bgh" onclick="closeM('m-add-client')">Cancel</button>
+    <button class="btn bg" style="flex:1" onclick="addClient()">Create Client</button>
+  </div>
+</div></div>
+
+<!-- Edit Client (Admin) -->
+<div class="mo" id="m-edit-client-a"><div class="md">
+  <button class="mx" onclick="closeM('m-edit-client-a')">✕</button>
+  <div class="mt2">EDIT CLIENT</div><div class="ms">Update client account details</div>
+  <div class="fr"><label>Company Name</label><input type="text" id="eca-nm"></div>
+  <div class="fr"><label>Contact Name</label><input type="text" id="eca-ct"></div>
+  <div class="fr"><label>Phone</label><input type="tel" id="eca-ph"></div>
+  <div class="fr"><label>Email</label><input type="email" id="eca-em"></div>
+  <div class="fr"><label>Login Code</label><input type="text" id="eca-cd" style="text-transform:uppercase"></div>
+  <div class="fr"><label>Contract Type</label>
+    <select id="eca-co">
+      <option>Bi-Weekly Interior Only — $35.75/vehicle</option>
+      <option>Bi-Weekly Interior + Exterior — $45/vehicle</option>
+      <option>Monthly Interior Only — $45/vehicle</option>
+      <option>Monthly Interior + Exterior — $60/vehicle</option>
+      <option>One-Time + Monthly Retainer — $500/mo (20 vehicles)</option>
+      <option>Custom</option>
+    </select>
+  </div>
+  <div class="fr"><label>Monthly Rate ($)</label><input type="number" id="eca-rt"></div>
+  <div class="fr"><label>Next Payment Due</label><input type="date" id="eca-pd"></div>
+  <div class="fr"><label>Service Agreement Notes</label><textarea id="eca-ag" placeholder="Service scope, special terms, notes..."></textarea></div>
+  <div style="margin-top:14px;padding:12px;background:var(--rd);border:1px solid var(--rb);border-radius:var(--r)">
+    <div style="font-size:.78rem;font-weight:600;color:var(--red);margin-bottom:6px">Danger Zone</div>
+    <button class="btn bre bsm bfl" onclick="deleteClient()">🗑 Delete This Client &amp; All Data</button>
+  </div>
+  <div class="fa">
+    <button class="btn bgh" onclick="closeM('m-edit-client-a')">Cancel</button>
+    <button class="btn bg" style="flex:1" onclick="saveEditClient()">Save Changes</button>
+  </div>
+</div></div>
+
+<!-- Edit Client (Client side) -->
+<div class="mo" id="m-edit-client-c"><div class="md">
+  <button class="mx" onclick="closeM('m-edit-client-c')">✕</button>
+  <div class="mt2">EDIT MY INFO</div><div class="ms">Update your account information</div>
+  <div class="fr"><label>Contact Name</label><input type="text" id="ecc-ct"></div>
+  <div class="fr"><label>Phone</label><input type="tel" id="ecc-ph"></div>
+  <div class="fr"><label>Email</label><input type="email" id="ecc-em"></div>
+  <div class="fa">
+    <button class="btn bgh" onclick="closeM('m-edit-client-c')">Cancel</button>
+    <button class="btn bg" style="flex:1" onclick="saveEditClientC()">Save Changes</button>
+  </div>
+</div></div>
+
+<!-- Log Damage (Admin) -->
+<div class="mo" id="m-log-dmg-a"><div class="md">
+  <button class="mx" onclick="closeM('m-log-dmg-a')">✕</button>
+  <div class="mt2">LOG DAMAGE</div><div class="ms">Record pre-existing damage on a vehicle</div>
+  <div class="fr"><label>Vehicle</label><select id="da-vid"></select></div>
+  <div class="fr"><label>Damage Area</label>
+    <select id="da-area">
+      <option>Front Bumper</option><option>Rear Bumper</option><option>Driver Side Door</option>
+      <option>Passenger Side Door</option><option>Hood</option><option>Roof</option>
+      <option>Rear Panel</option><option>Windshield</option><option>Side Mirror</option>
+      <option>Interior — Dashboard</option><option>Interior — Seat</option><option>Interior — Floor</option>
+      <option>Wheel / Rim</option><option>Undercarriage</option><option>Other</option>
+    </select>
+  </div>
+  <div class="fr"><label>Description</label><textarea id="da-desc" placeholder="Describe the damage — severity, when noticed..."></textarea></div>
+  <div class="fr">
+    <label>Photos (Required)</label>
+    <div class="pz"><div class="pz-inner"><div class="pzi">📷</div><div class="pzt">Tap to add photos</div></div><input type="file" accept="image/*" multiple onchange="addP('da',this)"></div>
+    <div class="ppg" id="da-pp"></div>
+  </div>
+  <div class="fa">
+    <button class="btn bgh" onclick="closeM('m-log-dmg-a')">Cancel</button>
+    <button class="btn bg" style="flex:1" onclick="submitDmgA()">Log Damage</button>
+  </div>
+</div></div>
+
+<!-- Report Damage (Client) -->
+<div class="mo" id="m-log-dmg-c"><div class="md">
+  <button class="mx" onclick="closeM('m-log-dmg-c')">✕</button>
+  <div class="mt2">REPORT DAMAGE</div><div class="ms">Document pre-existing damage — GSD will acknowledge</div>
+  <div class="fr"><label>Vehicle</label><select id="dc-vid"></select></div>
+  <div class="fr"><label>Damage Area</label>
+    <select id="dc-area">
+      <option>Front Bumper</option><option>Rear Bumper</option><option>Driver Side Door</option>
+      <option>Passenger Side Door</option><option>Hood</option><option>Roof</option>
+      <option>Rear Panel</option><option>Windshield</option><option>Side Mirror</option>
+      <option>Interior — Dashboard</option><option>Interior — Seat</option><option>Interior — Floor</option>
+      <option>Wheel / Rim</option><option>Undercarriage</option><option>Other</option>
+    </select>
+  </div>
+  <div class="fr"><label>Description</label><textarea id="dc-desc" placeholder="Location, severity, when you noticed it..."></textarea></div>
+  <div class="fr">
+    <label>Photos (strongly recommended)</label>
+    <div class="pz"><div class="pz-inner"><div class="pzi">📷</div><div class="pzt">Tap to add photos</div></div><input type="file" accept="image/*" multiple onchange="addP('dc',this)"></div>
+    <div class="ppg" id="dc-pp"></div>
+  </div>
+  <div class="fa">
+    <button class="btn bgh" onclick="closeM('m-log-dmg-c')">Cancel</button>
+    <button class="btn bg" style="flex:1" onclick="submitDmgC()">Submit Report</button>
+  </div>
+</div></div>
+
+<!-- Extra Work Request -->
+<div class="mo" id="m-req"><div class="md">
+  <button class="mx" onclick="closeM('m-req')">✕</button>
+  <div class="mt2">EXTRA WORK REQUEST</div><div class="ms">Request services outside your current contract</div>
+  <div class="fr"><label>Vehicles (select all that apply)</label>
+    <div id="req-v-checks" style="background:var(--s3);border:1px solid var(--border);border-radius:var(--r);padding:10px;max-height:160px;overflow-y:auto"></div>
+  </div>
+  <div class="fr"><label>Type of Work</label>
+    <select id="req-typ">
+      <option>Exterior Wash</option>
+      <option>Full Detail (Interior + Exterior)</option>
+      <option>Seat Deep Clean</option>
+      <option>Headlight Restoration</option>
+      <option>Engine Bay Clean</option>
+      <option>Odor Elimination</option>
+      <option>Stain Removal</option>
+      <option>Other (describe below)</option>
+    </select>
+  </div>
+  <div class="fr"><label>Description &amp; Details</label><textarea id="req-desc" placeholder="What you need done, urgency, any special notes..."></textarea></div>
+  <div class="fr">
+    <label>Photos (optional)</label>
+    <div class="pz"><div class="pz-inner"><div class="pzi">📷</div><div class="pzt">Tap to add photos</div></div><input type="file" accept="image/*" multiple onchange="addP('rq',this)"></div>
+    <div class="ppg" id="rq-pp"></div>
+  </div>
+  <div class="fa">
+    <button class="btn bgh" onclick="closeM('m-req')">Cancel</button>
+    <button class="btn bg" style="flex:1" onclick="submitReq()">Submit Request</button>
+  </div>
+</div></div>
+
+<!-- Add Payment (Admin) -->
+<div class="mo" id="m-add-pay"><div class="md">
+  <button class="mx" onclick="closeM('m-add-pay')">✕</button>
+  <div class="mt2">LOG PAYMENT</div><div class="ms" id="m-add-pay-sub">Record a payment received</div>
+  <div class="fr"><label>Amount ($)</label><input type="number" id="pay-amt" placeholder="700.00"></div>
+  <div class="fr"><label>Date Paid</label><input type="date" id="pay-date"></div>
+  <div class="fr"><label>Method</label>
+    <select id="pay-meth">
+      <option>Check</option><option>Zelle</option><option>Cash</option><option>Bank Transfer</option><option>Credit Card</option><option>Other</option>
+    </select>
+  </div>
+  <div class="fr"><label>Notes (optional)</label><input type="text" id="pay-note" placeholder="Invoice #, notes..."></div>
+  <div class="fa">
+    <button class="btn bgh" onclick="closeM('m-add-pay')">Cancel</button>
+    <button class="btn bg" style="flex:1" onclick="logPayment()">Log Payment</button>
+  </div>
+</div></div>
+
+<!-- Add Service History (Admin) -->
+<div class="mo" id="m-add-svc"><div class="md">
+  <button class="mx" onclick="closeM('m-add-svc')">✕</button>
+  <div class="mt2">LOG SERVICE</div><div class="ms" id="m-add-svc-sub">Record a completed service visit</div>
+  <div class="fr"><label>Date</label><input type="date" id="svc-date"></div>
+  <div class="fr"><label>Service Type</label>
+    <select id="svc-typ">
+      <option>Interior Only — Bi-Weekly</option>
+      <option>Interior Only — Monthly</option>
+      <option>Interior + Exterior — Bi-Weekly</option>
+      <option>Interior + Exterior — Monthly</option>
+      <option>One-Time Full Fleet Clean</option>
+      <option>Extra Work</option>
+      <option>Other</option>
+    </select>
+  </div>
+  <div class="fr"><label>Vehicles Cleaned</label><input type="number" id="svc-veh" placeholder="Number of vehicles"></div>
+  <div class="fr"><label>Technician</label><input type="text" id="svc-tech" placeholder="Who performed the service"></div>
+  <div class="fr"><label>Notes</label><textarea id="svc-notes" placeholder="Any notable details, issues, follow-ups..."></textarea></div>
+  <div class="fa">
+    <button class="btn bgh" onclick="closeM('m-add-svc')">Cancel</button>
+    <button class="btn bg" style="flex:1" onclick="logService()">Log Service</button>
+  </div>
+</div></div>
+
+<!-- Lightbox -->
+<div class="mo" id="m-lb" onclick="closeM('m-lb')" style="align-items:center;padding:16px">
+  <img id="lb-img" src="" style="max-width:100%;max-height:88dvh;border-radius:8px;object-fit:contain">
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════
+// STATE
+// ═══════════════════════════════
+const APASS_DEFAULT='gsd2026';
+function defState(){
+  return {
+    adminPass:APASS_DEFAULT,
+    actLog:[],
+    clients:[]
+  };
+}
+
+function defVehicles(){
+  const v=[];
+  for(let i=1;i<=35;i++) v.push({id:`EV${String(i).padStart(2,'0')}`,plate:'',type:'EDV — Amazon Electric Delivery Vehicle',status:'no_status',photos:[],notes:'',lastUpdated:null});
+  for(let i=1;i<=24;i++) v.push({id:`XL${String(i).padStart(2,'0')}`,plate:'',type:'XL — Amazon Standard Delivery Van',status:'no_status',photos:[],notes:'',lastUpdated:null});
+  return v;
+}
+
+let ST=(()=>{try{const s=localStorage.getItem('gsd_fleet_v1');return s?JSON.parse(s):defState();}catch(e){return defState();}})();
+let me=null,myC=null,selV=null,viewCid=null,selVIsAdmin=false;
+const tmp={v:[],da:[],dc:[],rq:[]};
+
+function save(){try{localStorage.setItem('gsd_fleet_v1',JSON.stringify(ST));}catch(e){}}
+
+// ═══════════════════════════════
+// AUTH
+// ═══════════════════════════════
+function ltab(t,el){
+  document.querySelectorAll('.ltab').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('lf-a').style.display=t==='admin'?'':'none';
+  document.getElementById('lf-c').style.display=t==='client'?'':'none';
+}
+function loginA(){
+  const p=document.getElementById('ap').value;
+  if(p!==ST.adminPass){toast('Incorrect password','err');log('admin','Failed Login','Wrong password');save();return;}
+  me='admin';log('admin','Login','Admin signed in');save();showS('s-admin');renderDash();
+  setTimeout(()=>{const n=document.getElementById('anav');if(n){n.scrollLeft=n.scrollWidth;setTimeout(()=>n.scrollLeft=0,500);}},700);
+}
+function loginC(){
+  const code=document.getElementById('cc').value.trim().toUpperCase();
+  const c=ST.clients.find(x=>x.code===code);
+  if(!c){toast('Client code not found','err');log('?','Failed Login','Bad code: '+code);save();return;}
+  if(c.disabled){toast('Access disabled — contact Gold Service Detailing','err');log(code,'Blocked',c.name+' blocked');save();return;}
+  me=code;myC=c;log(code,'Login',c.name+' signed in');save();
+  document.getElementById('cl-nm').textContent=c.name;
+  document.getElementById('cl-role').textContent=c.contract;
+  showS('s-client');renderCFleet();
+}
+function logout(){
+  if(me) log(me,'Logout',me==='admin'?'Admin signed out':(myC?.name||me)+' signed out');
+  save();me=null;myC=null;selV=null;viewCid=null;
+  showS('s-login');
+  document.getElementById('ap').value='';
+  document.getElementById('cc').value='';
+}
+function showS(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+// ═══════════════════════════════
+// ADMIN PAGES
+// ═══════════════════════════════
+function ap(page,el){
+  document.querySelectorAll('#s-admin .pg').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#anav .nt').forEach(t=>t.classList.remove('active'));
+  const pid=page==='cd'?'ap-cd':(page==='alerts'?'ap-dash':('ap-'+page));
+  document.getElementById(pid)?.classList.add('active');
+  if(el) el.classList.add('active');
+  else{const tabs=[...document.querySelectorAll('#anav .nt')];const m={dash:0,clients:1,requests:2,damages:3,settings:4};if(m[page]!==undefined)tabs[m[page]]?.classList.add('active');}
+  if(page==='dash')     renderDash();
+  if(page==='clients')  renderClients();
+  if(page==='alerts')   renderDash();
+  if(page==='requests') renderAllReq();
+  if(page==='damages')  renderAllDmg();
+  if(page==='settings') renderSettings();
+}
+
+function renderDash(){
+  const allV=ST.clients.flatMap(c=>c.vehicles);
+  const needs=allV.filter(v=>v.status==='needs_cleaning').length;
+  const dmg=ST.clients.flatMap(c=>c.damages).filter(d=>!d.acknowledged).length;
+  const req=ST.clients.flatMap(c=>c.requests).filter(r=>r.status==='pending').length;
+  document.getElementById('a-kpis').innerHTML=[
+    {l:'Clients',v:ST.clients.length,c:'var(--gold)'},
+    {l:'Needs Cleaning',v:needs,c:'var(--orange)'},
+    {l:'Unack. Damage',v:dmg,c:'var(--red)'},
+    {l:'Open Requests',v:req,c:'var(--blue)'},
+  ].map(k=>`<div class="card" style="${k.v>0&&k.c!=='var(--gold)'?'border-color:'+k.c+'40':''}">
+    <div class="kv" style="color:${k.c}">${k.v}</div><div class="kl">${k.l}</div></div>`).join('');
+  const alerts=getAlerts();
+  document.getElementById('a-ap').innerHTML=alerts.length?`<div class="leg"><div class="li"><div class="ld" style="background:var(--orange)"></div>Cleaning</div><div class="li"><div class="ld" style="background:var(--red)"></div>Damage</div><div class="li"><div class="ld" style="background:var(--blue)"></div>Request</div></div>`+alerts.map(a=>aRow(a,true)).join(''):`<div class="emp" style="padding:16px"><div class="ei">✅</div><div class="et">No active alerts — all fleets good</div></div>`;
+  const pr=ST.clients.flatMap(c=>c.requests.filter(r=>r.status==='pending').map(r=>({...r,cn:c.name,cid:c.id}))).slice(0,3);
+  document.getElementById('a-rp').innerHTML=pr.length?pr.map(r=>rCard({...r},true,true)).join(''):`<div class="emp" style="padding:16px"><div class="ei">📋</div><div class="et">No pending requests</div></div>`;
+}
+
+function renderClients(){
+  const el=document.getElementById('a-cl');
+  if(!ST.clients.length){el.innerHTML='<div class="emp"><div class="ei">👥</div><div class="et">No clients yet</div></div>';return;}
+  el.innerHTML=ST.clients.map(c=>{
+    const f=c.vehicles.filter(v=>v.status==='needs_cleaning').length+c.damages.filter(d=>!d.acknowledged).length+c.requests.filter(r=>r.status==='pending').length;
+    return `<div class="cr" onclick="viewClient('${c.id}')">
+      <div class="ca">${c.name[0].toUpperCase()}</div>
+      <div class="ci"><div class="cn2">${c.name}</div><div class="cm">${c.vehicles.length} vehicles · Code: <span style="color:var(--gold)">${c.code}</span></div></div>
+      <div class="cf"><div class="cfn" style="color:${f>0?'var(--red)':'var(--green)'}">${f}</div><div class="cfl">alerts</div></div>
+    </div>`;
+  }).join('');
+}
+
+function viewClient(id){
+  viewCid=id;
+  const c=ST.clients.find(x=>x.id===id); if(!c) return;
+  document.getElementById('cd-ey').textContent=c.contract;
+  document.getElementById('cd-t').textContent=c.name.toUpperCase();
+  document.getElementById('cd-s').textContent=`${c.vehicles.length} vehicles · ${c.contact} · ${c.phone||''}`;
+  document.getElementById('m-av-a-sub').textContent='Adding to: '+c.name;
+  const needs=c.vehicles.filter(v=>v.status==='needs_cleaning').length;
+  const dmg=c.damages.filter(d=>!d.acknowledged).length;
+  const req=c.requests.filter(r=>r.status==='pending').length;
+  document.getElementById('cd-kpis').innerHTML=[
+    {l:'Vehicles',v:c.vehicles.length,col:'var(--gold)'},{l:'Needs Clean',v:needs,col:'var(--orange)'},
+    {l:'Damage',v:dmg,col:'var(--red)'},{l:'Requests',v:req,col:'var(--blue)'}
+  ].map(k=>`<div class="card"><div class="kv" style="color:${k.col}">${k.v}</div><div class="kl">${k.l}</div></div>`).join('');
+  document.getElementById('cd-fc').textContent=`${c.vehicles.filter(v=>v.type.includes('EDV')).length} EDV · ${c.vehicles.filter(v=>v.type.includes('XL')).length} XL`;
+  document.getElementById('cd-v').innerHTML=c.vehicles.map(v=>vCard(v,true)).join('');
+  // Damage
+  document.getElementById('cd-d').innerHTML=c.damages.length
+    ?c.damages.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(d=>dCard(d,true,c.id)).join('')
+    :'<div style="color:var(--t3);font-size:.8rem;padding:10px 0">No damage reports</div>';
+  // Requests with add payment + service log btns
+  document.getElementById('cd-r').innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+    <button class="btn bbl bsm" onclick="openAddPay('${c.id}')">+ Log Payment</button>
+    <button class="btn bgr bsm" onclick="openAddSvc('${c.id}')">+ Log Service</button>
+  </div>`+(c.requests.length?c.requests.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(r=>rCard({...r,cid:c.id,cn:c.name},true,false)).join(''):'<div style="color:var(--t3);font-size:.8rem">No requests</div>');
+  // populate damage vehicle select
+  const opts=c.vehicles.map(v=>`<option value="${v.id}">${v.id}${v.plate?' ('+v.plate+')':''}</option>`).join('');
+  document.getElementById('da-vid').innerHTML=opts;
+  ap('cd',null);
+}
+
+// ═══════════════════════════════
+// ALERTS
+// ═══════════════════════════════
+function getAlerts(){
+  const out=[];
+  ST.clients.forEach(c=>{
+    c.vehicles.filter(v=>v.status==='needs_cleaning').forEach(v=>out.push({type:'clean',cn:c.name,cid:c.id,vid:v.id,text:`${v.id} needs cleaning`,col:'orange',time:v.lastUpdated}));
+    c.damages.filter(d=>!d.acknowledged).forEach(d=>out.push({type:'dmg',cn:c.name,cid:c.id,did:d.id,vid:d.vehicleId,text:`Damage on ${d.vehicleId}: ${d.description.slice(0,45)}`,col:'red',time:d.createdAt}));
+    c.requests.filter(r=>r.status==='pending').forEach(r=>out.push({type:'req',cn:c.name,cid:c.id,rid:r.id,vid:r.vehicleId||'Fleet',text:`Request: ${r.type}`,col:'blue',time:r.createdAt}));
+  });
+  return out.sort((a,b)=>new Date(b.time)-new Date(a.time));
+}
+function aRow(a,showAct){
+  const cleanBtn=showAct&&a.type==='clean'?`<button class="btn bgr bsm" style="flex-shrink:0" onclick="markCleaned('${a.cid}','${a.vid}',event)">✓ Cleaned</button>`:'';
+  const ackBtn=showAct&&a.type==='dmg'?`<button class="btn bgh bsm" style="flex-shrink:0" onclick="ackDmg('${a.cid}','${a.did}',event)">Ack</button>`:'';
+  return `<div class="ar"><div class="ard" style="background:var(--${a.col})"></div>
+    <div style="flex:1;min-width:0"><div class="art">${a.text}</div><div class="arm">${a.cn} · ${a.time?new Date(a.time).toLocaleDateString():'Just now'}</div></div>
+    ${cleanBtn}${ackBtn}</div>`;
+}
+function renderAlerts(){document.getElementById('a-al').innerHTML=getAlerts().map(a=>aRow(a,true)).join('')||'<div class="emp"><div class="ei">✅</div><div class="et">All clear — no active alerts</div></div>';}
+function markCleaned(cid,vid,e){if(e)e.stopPropagation();const c=ST.clients.find(x=>x.id===cid);const v=c?.vehicles.find(x=>x.id===vid);if(!v)return;v.status='cleaning_done';v.lastUpdated=new Date().toISOString();log('admin','Marked Clean',`${vid} — ${c.name}`);save();renderDash();if(viewCid===cid)viewClient(cid);toast(`${vid} marked clean ✓`,'ok');}
+function ackDmg(cid,did,e){if(e)e.stopPropagation();const c=ST.clients.find(x=>x.id===cid);const d=c?.damages.find(x=>x.id===did);if(!d)return;d.acknowledged=true;d.acknowledgedAt=new Date().toISOString();log('admin','Ack Damage',`${d.vehicleId} — ${c.name}`);save();renderAllDmg();renderDash();if(viewCid===cid)viewClient(cid);toast('Damage acknowledged','ok');}
+function renderAllReq(){const all=ST.clients.flatMap(c=>c.requests.map(r=>({...r,cn:c.name,cid:c.id}))).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));document.getElementById('a-req').innerHTML=all.length?all.map(r=>rCard(r,true,false)).join(''):'<div class="emp"><div class="ei">📋</div><div class="et">No requests</div></div>';}
+function renderAllDmg(){const all=ST.clients.flatMap(c=>c.damages.map(d=>({...d,cn:c.name,cid:c.id}))).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));document.getElementById('a-dmg').innerHTML=all.length?all.map(d=>dCard(d,true,d.cid)).join(''):'<div class="emp"><div class="ei">🛡️</div><div class="et">No damage reports</div></div>';}
+
+// ═══════════════════════════════
+// CLIENTS CRUD
+// ═══════════════════════════════
+function addClient(){
+  const nm=document.getElementById('ac-nm').value.trim();
+  const code=document.getElementById('ac-cd').value.trim().toUpperCase();
+  if(!nm||!code){toast('Name and code required','err');return;}
+  if(ST.clients.find(c=>c.code===code)){toast('Code in use','err');return;}
+  const rt=parseFloat(document.getElementById('ac-rt').value)||0;
+  ST.clients.push({
+    id:'c'+Date.now(),code,name:nm,
+    contact:document.getElementById('ac-ct').value.trim(),
+    phone:document.getElementById('ac-ph').value.trim(),
+    email:document.getElementById('ac-em').value.trim(),
+    contract:document.getElementById('ac-co').value,
+    monthlyRate:rt,
+    nextPayment:document.getElementById('ac-pd').value,
+    agreementNotes:'',disabled:false,
+    vehicles:[],damages:[],requests:[],payments:[],serviceHistory:[]
+  });
+  log('admin','Client Added',nm+' — code: '+code);
+  save();closeM('m-add-client');renderClients();
+  toast(`${nm} added · Code: ${code}`,'ok');
+}
+function openEditClient(){
+  const c=ST.clients.find(x=>x.id===viewCid); if(!c) return;
+  ['nm','ct','ph','em','cd'].forEach(k=>{const el=document.getElementById('eca-'+k);if(el)el.value=c[{nm:'name',ct:'contact',ph:'phone',em:'email',cd:'code'}[k]]||'';});
+  document.getElementById('eca-co').value=c.contract;
+  document.getElementById('eca-rt').value=c.monthlyRate||'';
+  document.getElementById('eca-pd').value=c.nextPayment||'';
+  document.getElementById('eca-ag').value=c.agreementNotes||'';
+  openM('m-edit-client-a');
+}
+function saveEditClient(){
+  const c=ST.clients.find(x=>x.id===viewCid); if(!c) return;
+  c.name=document.getElementById('eca-nm').value.trim();
+  c.contact=document.getElementById('eca-ct').value.trim();
+  c.phone=document.getElementById('eca-ph').value.trim();
+  c.email=document.getElementById('eca-em').value.trim();
+  c.code=document.getElementById('eca-cd').value.trim().toUpperCase();
+  c.contract=document.getElementById('eca-co').value;
+  c.monthlyRate=parseFloat(document.getElementById('eca-rt').value)||0;
+  c.nextPayment=document.getElementById('eca-pd').value;
+  c.agreementNotes=document.getElementById('eca-ag').value.trim();
+  log('admin','Client Edited',c.name);
+  save();closeM('m-edit-client-a');viewClient(c.id);toast('Client updated','ok');
+}
+function deleteClient(){
+  if(!confirm('Delete this client and all their data?')) return;
+  ST.clients=ST.clients.filter(c=>c.id!==viewCid);
+  log('admin','Client Deleted','cid:'+viewCid);
+  save();closeM('m-edit-client-a');ap('clients',null);toast('Client deleted','ok');
+}
+
+// ═══════════════════════════════
+// VEHICLES
+// ═══════════════════════════════
+function vCard(v,isAdmin){
+  const cid=isAdmin?viewCid:(myC?.id);
+  const c=ST.clients.find(x=>x.id===cid);
+  const dmg=c?.damages.filter(d=>d.vehicleId===v.id&&!d.acknowledged).length||0;
+  const req=c?.requests.filter(r=>r.vehicleId===v.id&&r.status==='pending').length||0;
+  let sc='',st='',sp='pgr';
+  if(v.status==='needs_cleaning'){sc='needs_cleaning';st='Needs Clean';sp='pn';}
+  else if(v.status==='can_wait'){sc='can_wait';st='Can Wait';sp='pw';}
+  else if(v.status==='cleaning_done'){sc='cleaning_done';st='Clean ✓';sp='pa';}
+  const typeShort=v.type.includes('EDV')?'EDV':v.type.includes('XL')?'XL':v.type.split(' ')[0];
+  return `<div class="vc ${sc}" onclick="openV('${v.id}',${isAdmin})">
+    <div class="vct">${typeShort}</div>
+    <div class="vci">${v.id}</div>
+    ${v.plate?`<div class="vcp">${v.plate}</div>`:''}
+    ${st?`<div class="vbs mt8"><span class="pi ${sp}">${st}</span></div>`:''}
+    <div class="vbs mt8">
+      ${v.photos?.length?`<span class="vb" style="background:rgba(201,168,76,.15);color:var(--gold)">📷${v.photos.length}</span>`:''}
+      ${dmg?`<span class="vb" style="background:var(--rd);color:var(--red)">⚠️${dmg}</span>`:''}
+      ${req?`<span class="vb" style="background:var(--bd);color:var(--blue)">📋${req}</span>`:''}
+    </div>
+  </div>`;
+}
+function openV(vid,isAdmin){
+  selVIsAdmin=isAdmin;
+  const c=isAdmin?ST.clients.find(x=>x.id===viewCid):myC; if(!c) return;
+  selV=c.vehicles.find(v=>v.id===vid); if(!selV) return;
+  document.getElementById('mv-id').textContent=selV.id;
+  document.getElementById('mv-tp').textContent=selV.type;
+  document.getElementById('mv-vid2').textContent=selV.id;
+  document.getElementById('mv-plt').textContent=selV.plate||'Not set';
+  document.getElementById('mv-typ2').textContent=selV.type;
+  document.getElementById('mv-nt2').textContent=selV.notes||'—';
+  document.getElementById('mv-notes').value=selV.notes||'';
+  document.getElementById('mv-rm').style.display=isAdmin?'':'none';
+  tmp.v=[...(selV.photos||[])];
+  renderPP('vpp','v');
+  ['mk-n','mk-w','mk-d'].forEach(id=>document.getElementById(id).classList.remove('sel'));
+  if(selV.status==='needs_cleaning')document.getElementById('mk-n').classList.add('sel');
+  if(selV.status==='can_wait')document.getElementById('mk-w').classList.add('sel');
+  if(selV.status==='cleaning_done')document.getElementById('mk-d').classList.add('sel');
+  selV._ps=undefined;
+  openM('m-v');
+}
+function setVS(s){
+  ['mk-n','mk-w','mk-d'].forEach(id=>document.getElementById(id).classList.remove('sel'));
+  if(s==='needs_cleaning')document.getElementById('mk-n').classList.add('sel');
+  if(s==='can_wait')document.getElementById('mk-w').classList.add('sel');
+  if(s==='cleaning_done')document.getElementById('mk-d').classList.add('sel');
+  if(selV)selV._ps=s;
+}
+function saveV(){
+  if(!selV) return;
+  if(selV._ps!==undefined){selV.status=selV._ps;delete selV._ps;}
+  selV.notes=document.getElementById('mv-notes').value;
+  selV.photos=[...tmp.v];
+  selV.lastUpdated=new Date().toISOString();
+  log(me,'Vehicle Updated',selV.id);
+  save();closeM('m-v');
+  if(selVIsAdmin)viewClient(viewCid); else renderCFleet();
+  toast('Vehicle saved','ok');
+}
+function openEditVehicle(){
+  if(!selV) return;
+  document.getElementById('ev-id').value=selV.id;
+  document.getElementById('ev-plt').value=selV.plate||'';
+  document.getElementById('ev-typ').value=selV.type;
+  document.getElementById('ev-nt').value=selV.notes||'';
+  openM('m-ev');
+}
+function saveEditV(){
+  if(!selV) return;
+  const newId=document.getElementById('ev-id').value.trim();
+  selV.id=newId||selV.id;
+  selV.plate=document.getElementById('ev-plt').value.trim().toUpperCase();
+  selV.type=document.getElementById('ev-typ').value;
+  selV.notes=document.getElementById('ev-nt').value.trim();
+  document.getElementById('mv-id').textContent=selV.id;
+  document.getElementById('mv-vid2').textContent=selV.id;
+  document.getElementById('mv-plt').textContent=selV.plate||'Not set';
+  document.getElementById('mv-typ2').textContent=selV.type;
+  document.getElementById('mv-nt2').textContent=selV.notes||'—';
+  log(me,'Vehicle Edited',selV.id);
+  save();closeM('m-ev');
+  if(selVIsAdmin)viewClient(viewCid); else renderCFleet();
+  toast('Vehicle updated','ok');
+}
+function removeV(){
+  if(!selV||!selVIsAdmin) return;
+  if(!confirm(`Remove ${selV.id}?`)) return;
+  const c=ST.clients.find(x=>x.id===viewCid); if(!c) return;
+  c.vehicles=c.vehicles.filter(v=>v.id!==selV.id);
+  log('admin','Vehicle Removed',selV.id+' from '+c.name);
+  save();closeM('m-v');viewClient(viewCid);toast(selV.id+' removed','ok');
+}
+function addVA(){
+  const c=ST.clients.find(x=>x.id===viewCid); if(!c) return;
+  const id=document.getElementById('ava-id').value.trim();
+  if(!id){toast('ID required','err');return;}
+  if(c.vehicles.find(v=>v.id===id)){toast('ID exists','err');return;}
+  c.vehicles.push({id,plate:document.getElementById('ava-plt').value.trim().toUpperCase(),type:document.getElementById('ava-typ').value,notes:document.getElementById('ava-nt').value.trim(),status:'no_status',photos:[],lastUpdated:null});
+  log('admin','Vehicle Added',id+' to '+c.name);
+  save();closeM('m-av-a');viewClient(viewCid);
+  ['ava-id','ava-plt','ava-nt'].forEach(x=>document.getElementById(x).value='');
+  toast(id+' added','ok');
+}
+function addVC(){
+  const c=myC; if(!c) return;
+  const id=document.getElementById('avc-id').value.trim();
+  if(!id){toast('ID required','err');return;}
+  if(c.vehicles.find(v=>v.id===id)){toast('ID exists','err');return;}
+  c.vehicles.push({id,plate:document.getElementById('avc-plt').value.trim().toUpperCase(),type:document.getElementById('avc-typ').value,notes:document.getElementById('avc-nt').value.trim(),status:'no_status',photos:[],lastUpdated:null});
+  log(me,'Vehicle Added',id);
+  save();closeM('m-av-c');renderCFleet();
+  ['avc-id','avc-plt','avc-nt'].forEach(x=>document.getElementById(x).value='');
+  toast(id+' added','ok');
+}
+
+// ═══════════════════════════════
+// DAMAGE
+// ═══════════════════════════════
+function dCard(d,isAdmin,cid){
+  const photos=(d.photos||[]).map(p=>`<img class="iph" src="${p}" onclick="lb('${p}')">`).join('');
+  return `<div class="ic dmg ${d.acknowledged?'ack':''}">
+    <div class="ih">
+      <div><div class="it">${d.vehicleId} — ${d.area||''}${d.cn?' · '+d.cn:''}</div><div class="im">${new Date(d.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div></div>
+      ${d.acknowledged?`<span class="pi pak">✓ Ack</span>`:`<span class="pi pp">Pending</span>`}
+    </div>
+    <div class="ib">${d.description}</div>
+    ${photos?`<div class="ips">${photos}</div>`:''}
+    ${isAdmin&&!d.acknowledged?`<div class="ia"><button class="btn bgr bsm" onclick="ackDmg('${cid}','${d.id}',null)">✓ Acknowledge</button></div>`:''}
+    ${d.acknowledged?`<div style="font-size:.68rem;color:var(--green);margin-top:6px;font-family:var(--fm)">Ack'd ${new Date(d.acknowledgedAt).toLocaleDateString()}</div>`:''}
+  </div>`;
+}
+function submitDmgA(){
+  const c=ST.clients.find(x=>x.id===viewCid); if(!c) return;
+  const vid=document.getElementById('da-vid').value;
+  const desc=document.getElementById('da-desc').value.trim();
+  if(!desc){toast('Describe the damage','err');return;}
+  c.damages.push({id:'d'+Date.now(),vehicleId:vid,area:document.getElementById('da-area').value,description:desc,photos:[...tmp.da],acknowledged:false,createdAt:new Date().toISOString()});
+  tmp.da=[];document.getElementById('da-pp').innerHTML='';document.getElementById('da-desc').value='';
+  log('admin','Damage Logged',vid+' — '+c.name);
+  save();closeM('m-log-dmg-a');viewClient(viewCid);toast('Damage logged','ok');
+}
+function submitDmgC(){
+  const c=myC; if(!c) return;
+  const vid=document.getElementById('dc-vid').value;
+  const desc=document.getElementById('dc-desc').value.trim();
+  if(!desc){toast('Describe the damage','err');return;}
+  c.damages.push({id:'d'+Date.now(),vehicleId:vid,area:document.getElementById('dc-area').value,description:desc,photos:[...tmp.dc],acknowledged:false,createdAt:new Date().toISOString()});
+  tmp.dc=[];document.getElementById('dc-pp').innerHTML='';document.getElementById('dc-desc').value='';
+  log(me,'Damage Reported',vid);
+  save();closeM('m-log-dmg-c');renderCDmg();renderCFleet();toast('Damage reported','ok');
+}
+
+// ═══════════════════════════════
+// REQUESTS
+// ═══════════════════════════════
+function rCard(r,isAdmin,compact){
+  const photos=(r.photos||[]).map(p=>`<img class="iph" src="${p}" onclick="lb('${p}')">`).join('');
+  const badge=r.status==='pending'?`<span class="pi pp">Pending</span>`:r.status==='approved'?`<span class="pi pa">Approved</span>`:r.status==='complete'?`<span class="pi pc">✅ Complete</span>`:`<span class="pi pde">Denied</span>`;
+  const adminBtns=isAdmin&&r.status==='pending'?`<div class="ia"><button class="btn bgr bsm" onclick="respReq('${r.cid}','${r.id}','approved')">Approve</button><button class="btn bre bsm" onclick="respReq('${r.cid}','${r.id}','denied')">Deny</button></div>`:'';
+  const compBtn=isAdmin&&r.status==='approved'?`<div class="ia"><button class="btn bbl bsm" onclick="respReq('${r.cid}','${r.id}','complete')">✅ Mark Complete</button></div>`:'';
+  const vLabel=Array.isArray(r.vehicles)&&r.vehicles.length?r.vehicles.join(', '):(r.vehicleId||'Fleet');
+  return `<div class="ic req ${r.status==='complete'?'done':''}">
+    <div class="ih">
+      <div><div class="it">${r.type} — ${vLabel}${!compact&&r.cn?' · '+r.cn:''}</div><div class="im">${new Date(r.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div></div>
+      ${badge}
+    </div>
+    <div class="ib">${r.description}</div>
+    ${photos?`<div class="ips">${photos}</div>`:''}
+    ${adminBtns}${compBtn}
+  </div>`;
+}
+function submitReq(){
+  const c=myC; if(!c) return;
+  const typ=document.getElementById('req-typ').value;
+  const desc=document.getElementById('req-desc').value.trim();
+  if(!desc){toast('Describe what you need','err');return;}
+  const checks=[...document.querySelectorAll('#req-v-checks input:checked')].map(i=>i.value);
+  c.requests.push({id:'r'+Date.now(),vehicles:checks,vehicleId:checks[0]||'',type:typ,description:desc,photos:[...tmp.rq],status:'pending',createdAt:new Date().toISOString()});
+  tmp.rq=[];document.getElementById('rq-pp').innerHTML='';document.getElementById('req-desc').value='';
+  log(me,'Request Submitted',typ);
+  save();closeM('m-req');renderCHistory();toast('Request submitted','ok');
+}
+function respReq(cid,rid,status){
+  const c=ST.clients.find(x=>x.id===cid);const r=c?.requests.find(x=>x.id===rid);if(!r)return;
+  r.status=status;r.respondedAt=new Date().toISOString();
+  log('admin','Request '+status.charAt(0).toUpperCase()+status.slice(1),r.type+' — '+c.name);
+  save();renderAllReq();renderDash();if(viewCid===cid)viewClient(cid);
+  toast({approved:'Approved!',denied:'Denied',complete:'Marked complete ✅'}[status]||'Updated','ok');
+}
+
+// ═══════════════════════════════
+// CLIENT PAGES
+// ═══════════════════════════════
+function cp(page,el){
+  document.querySelectorAll('#s-client .pg').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#s-client .nt').forEach(t=>t.classList.remove('active'));
+  document.getElementById('cp-'+page)?.classList.add('active');
+  if(el)el.classList.add('active');
+  if(page==='fleet')    renderCFleet();
+  if(page==='profile')  renderCProfile();
+  if(page==='damages')  renderCDmg();
+  if(page==='history')  renderCHistory();
+  if(page==='requests') renderCHistory(); // redirect old requests to history
+}
+
+function renderCHistory(){
+  const c=myC; if(!c) return;
+  // Service history
+  const svcs=c.serviceHistory||[];
+  document.getElementById('cl-svc-hist2').innerHTML=svcs.length
+    ?svcs.slice().reverse().map(s=>`<div class="hist-row"><div class="hist-date">${new Date(s.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div><div class="hist-svc">${s.type}</div><div class="hist-detail">${s.vehicles||'?'} vehicles${s.tech?' · '+s.tech:''}${s.notes?' · '+s.notes:''}</div></div>`).join('')
+    :'<div style="color:var(--t3);font-size:.82rem">No service history yet</div>';
+  // Payment history
+  const pays=c.payments||[];
+  document.getElementById('cl-pay-hist2').innerHTML=pays.length
+    ?pays.slice().reverse().map(p=>`<div class="pay-row"><div><div class="pay-label">${p.method}</div><div class="pay-date">${new Date(p.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}${p.note?' · '+p.note:''}</div></div><div class="pay-amt" style="color:var(--green)">$${parseFloat(p.amount).toFixed(2)}</div></div>`).join('')
+    :'<div style="color:var(--t3);font-size:.82rem">No payments on record yet</div>';
+}
+
+function quickRequest(){
+  const c=myC; if(!c||!selV) return;
+  const typ=document.getElementById('mv-req-typ').value;
+  if(!typ){toast('Select a service type','err');return;}
+  const note=document.getElementById('mv-req-note').value.trim();
+  c.requests.push({id:'r'+Date.now(),vehicles:[selV.id],vehicleId:selV.id,type:typ,description:note||typ+' requested for '+selV.id,photos:[],status:'pending',createdAt:new Date().toISOString()});
+  log(me,'Quick Request',typ+' — '+selV.id);
+  save();
+  document.getElementById('mv-req-typ').value='';
+  document.getElementById('mv-req-note').value='';
+  toast(typ+' requested ✓','ok');
+  closeM('m-v');
+  renderCHistory();
+}
+function renderCFleet(){
+  const c=myC; if(!c) return;
+  document.getElementById('cl-ft').textContent=c.name.slice(0,22).toUpperCase();
+  document.getElementById('cl-fs').textContent=`${c.vehicles.length} vehicles · ${c.vehicles.filter(v=>v.status==='needs_cleaning').length} flagged`;
+  const opts=c.vehicles.map(v=>`<option value="${v.id}">${v.id}${v.plate?' ('+v.plate+')':''}</option>`).join('');
+  document.getElementById('dc-vid').innerHTML=opts;
+  // Build vehicle checkboxes for request modal
+  document.getElementById('req-v-checks').innerHTML=c.vehicles.map(v=>`
+    <label style="display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer;font-size:.83rem;border-bottom:1px solid var(--border)">
+      <input type="checkbox" value="${v.id}" style="accent-color:var(--gold);width:16px;height:16px">
+      <span>${v.id}</span><span style="font-family:var(--fm);font-size:.65rem;color:var(--t3)">${v.type.split('—')[0].trim()}</span>
+    </label>`).join('');
+  document.getElementById('cl-vg').innerHTML=c.vehicles.map(v=>vCard(v,false)).join('');
+}
+
+function renderCProfile(){
+  const c=myC; if(!c) return;
+  document.getElementById('cl-prf-av').textContent=c.name[0].toUpperCase();
+  document.getElementById('cl-prf-name').textContent=c.name.toUpperCase();
+  document.getElementById('cl-prf-meta').textContent=`${c.contact||''}${c.phone?' · '+c.phone:''}${c.email?' · '+c.email:''}`;
+  // Service agreement
+  document.getElementById('cl-agreement').innerHTML=`
+    <div class="vdr"><span class="vdl">Contract</span><span class="vdv" style="font-family:var(--fb);font-size:.82rem">${c.contract}</span></div>
+    <div class="vdr"><span class="vdl">Monthly Rate</span><span class="vdv">$${(c.monthlyRate||0).toFixed(2)}</span></div>
+    <div class="vdr"><span class="vdl">Fleet Size</span><span class="vdv">${c.vehicles.length} vehicles</span></div>
+    ${c.agreementNotes?`<div style="margin-top:10px;font-size:.82rem;color:var(--t2);line-height:1.6">${c.agreementNotes}</div>`:''}`;
+  // Upcoming payment
+  document.getElementById('cl-upcoming').innerHTML=c.nextPayment
+    ?`<div class="pay-row"><div><div class="pay-label">Next Payment</div><div class="pay-date">${new Date(c.nextPayment+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}</div></div><div class="pay-amt">$${(c.monthlyRate||0).toFixed(2)}</div></div>`
+    :'<div style="color:var(--t3);font-size:.82rem">No upcoming payment on file</div>';
+  // Payment history
+  const pays=c.payments||[];
+  document.getElementById('cl-pay-hist').innerHTML=pays.length
+    ?pays.slice().reverse().map(p=>`<div class="pay-row"><div><div class="pay-label">${p.method}</div><div class="pay-date">${new Date(p.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}${p.note?' · '+p.note:''}</div></div><div class="pay-amt" style="color:var(--green)">$${parseFloat(p.amount).toFixed(2)}</div></div>`).join('')
+    :'<div style="color:var(--t3);font-size:.82rem">No payments on record yet</div>';
+  // Service history
+  const svcs=c.serviceHistory||[];
+  document.getElementById('cl-svc-hist').innerHTML=svcs.length
+    ?svcs.slice().reverse().map(s=>`<div class="hist-row"><div class="hist-date">${new Date(s.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div><div class="hist-svc">${s.type}</div><div class="hist-detail">${s.vehicles||'?'} vehicles cleaned${s.tech?' · '+s.tech:''}${s.notes?' · '+s.notes:''}</div></div>`).join('')
+    :'<div style="color:var(--t3);font-size:.82rem">No service history yet</div>';
+  // Pre-fill edit modal
+  document.getElementById('ecc-ct').value=c.contact||'';
+  document.getElementById('ecc-ph').value=c.phone||'';
+  document.getElementById('ecc-em').value=c.email||'';
+}
+
+function saveEditClientC(){
+  const c=myC; if(!c) return;
+  c.contact=document.getElementById('ecc-ct').value.trim();
+  c.phone=document.getElementById('ecc-ph').value.trim();
+  c.email=document.getElementById('ecc-em').value.trim();
+  log(me,'Profile Updated',c.name);
+  save();closeM('m-edit-client-c');renderCProfile();toast('Profile updated','ok');
+}
+function renderCDmg(){
+  const c=myC; if(!c) return;
+  document.getElementById('cl-dmg').innerHTML=c.damages.length
+    ?c.damages.slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(d=>dCard(d,false,c.id)).join('')
+    :'<div class="emp"><div class="ei">🛡️</div><div class="et">No damage reports yet.</div></div>';
+}
+function renderCReq(){
+  const c=myC; if(!c) return;
+  document.getElementById('cl-req').innerHTML=c.requests.length
+    ?c.requests.slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(r=>rCard({...r,cid:c.id},false,false)).join('')
+    :'<div class="emp"><div class="ei">📋</div><div class="et">No requests yet.</div></div>';
+}
+
+// ═══════════════════════════════
+// PAYMENTS & SERVICE LOG (Admin)
+// ═══════════════════════════════
+function openAddPay(cid){
+  viewCid=cid;
+  document.getElementById('m-add-pay-sub').textContent='Client: '+ST.clients.find(x=>x.id===cid)?.name;
+  document.getElementById('pay-date').value=new Date().toISOString().split('T')[0];
+  openM('m-add-pay');
+}
+function logPayment(){
+  const c=ST.clients.find(x=>x.id===viewCid); if(!c) return;
+  const amt=parseFloat(document.getElementById('pay-amt').value);
+  if(!amt){toast('Enter amount','err');return;}
+  if(!c.payments) c.payments=[];
+  c.payments.push({id:'p'+Date.now(),amount:amt,date:document.getElementById('pay-date').value,method:document.getElementById('pay-meth').value,note:document.getElementById('pay-note').value.trim()});
+  // Update next payment date
+  const np=new Date(document.getElementById('pay-date').value+'T12:00:00');
+  if(c.contract.includes('Bi-Weekly')) np.setDate(np.getDate()+14);
+  else np.setMonth(np.getMonth()+1);
+  c.nextPayment=np.toISOString().split('T')[0];
+  log('admin','Payment Logged','$'+amt+' from '+c.name);
+  save();closeM('m-add-pay');viewClient(viewCid);toast('$'+amt.toFixed(2)+' logged','ok');
+}
+function openAddSvc(cid){
+  viewCid=cid;
+  document.getElementById('m-add-svc-sub').textContent='Client: '+ST.clients.find(x=>x.id===cid)?.name;
+  document.getElementById('svc-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('svc-tech').value='Christ Pierre';
+  openM('m-add-svc');
+}
+function logService(){
+  const c=ST.clients.find(x=>x.id===viewCid); if(!c) return;
+  if(!c.serviceHistory) c.serviceHistory=[];
+  c.serviceHistory.push({id:'s'+Date.now(),date:document.getElementById('svc-date').value,type:document.getElementById('svc-typ').value,vehicles:parseInt(document.getElementById('svc-veh').value)||c.vehicles.length,tech:document.getElementById('svc-tech').value.trim(),notes:document.getElementById('svc-notes').value.trim()});
+  log('admin','Service Logged',c.name+' — '+document.getElementById('svc-typ').value);
+  save();closeM('m-add-svc');viewClient(viewCid);toast('Service logged','ok');
+}
+
+// ═══════════════════════════════
+// SETTINGS
+// ═══════════════════════════════
+function renderSettings(){
+  document.getElementById('s-ac').innerHTML=ST.clients.map(c=>`
+    <div class="set-row">
+      <div><div style="font-size:.88rem;font-weight:600">${c.name}</div><div style="font-family:var(--fm);font-size:.62rem;color:var(--t3)">Code: ${c.code}</div></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="pi ${c.disabled?'pde':'pa'}">${c.disabled?'Disabled':'Active'}</span>
+        <button class="btn ${c.disabled?'bgr':'bre'} bsm" onclick="toggleAccess('${c.id}')">${c.disabled?'Enable':'Disable'}</button>
+      </div>
+    </div>`).join('')||'<div style="color:var(--t3);font-size:.8rem">No clients</div>';
+  document.getElementById('s-codes').innerHTML=`<div style="background:var(--s3);border-radius:var(--r);overflow:hidden;border:1px solid var(--border)">
+    ${ST.clients.map(c=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border)">
+      <div style="font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;margin-right:10px">${c.name}</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <span style="font-family:var(--fm);color:var(--gold);font-size:.82rem">${c.code}</span>
+        <button class="btn bgh bsm" style="padding:3px 8px;font-size:.62rem" onclick="cpCode('${c.code}')">Copy</button>
+        <span class="pi ${c.disabled?'pde':'pa'}" style="font-size:.58rem">${c.disabled?'Off':'On'}</span>
+      </div>
+    </div>`).join('')}
+  </div>`;
+  const log2=ST.actLog||[];
+  document.getElementById('s-log').innerHTML=log2.length
+    ?log2.map(l=>`<div class="act-entry"><div class="act-time">${new Date(l.ts).toLocaleString('en-US',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'})}</div><div><div style="font-size:.78rem;font-weight:600">${l.action}</div><div style="font-size:.72rem;color:var(--t2)">${l.detail}</div><div style="font-family:var(--fm);font-size:.58rem;color:var(--t3)">${l.user}</div></div></div>`).join('')
+    :'<div style="color:var(--t3);font-size:.8rem;padding:10px 0">No activity yet</div>';
+}
+function toggleAccess(cid){const c=ST.clients.find(x=>x.id===cid);if(!c)return;c.disabled=!c.disabled;log('admin',c.disabled?'Access Disabled':'Access Enabled',c.name);save();renderSettings();toast(c.name+' '+(c.disabled?'disabled':'enabled'),c.disabled?'err':'ok');}
+function chgPass(){
+  const cur=document.getElementById('scp').value,nw=document.getElementById('snp').value,cf=document.getElementById('scp2').value;
+  if(cur!==ST.adminPass){toast('Wrong current password','err');return;}
+  if(nw.length<4){toast('Too short','err');return;}
+  if(nw!==cf){toast("Passwords don't match",'err');return;}
+  ST.adminPass=nw;log('admin','Password Changed','Admin password updated');save();
+  ['scp','snp','scp2'].forEach(x=>document.getElementById(x).value='');
+  toast('Password updated','ok');
+}
+function cpCode(code){navigator.clipboard.writeText(code).then(()=>toast('Copied: '+code,'ok')).catch(()=>toast('Code: '+code,'ok'));}
+function exportData(){const b=new Blob([JSON.stringify(ST,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='GSD-Portal-'+new Date().toISOString().split('T')[0]+'.json';a.click();log('admin','Data Export','JSON export');save();toast('Exported','ok');}
+function resetPortal(){if(!confirm('Reset ALL portal data? Cannot be undone.'))return;localStorage.removeItem('gsd_fleet_v1');ST=defState();save();toast('Portal reset','ok');logout();}
+
+// ═══════════════════════════════
+// PHOTOS
+// ═══════════════════════════════
+function addP(key,input){
+  const files=Array.from(input.files);
+  if(!files.length) return;
+  const pmap={v:'vpp',da:'da-pp',dc:'dc-pp',rq:'rq-pp'};
+  let loaded=0;
+  files.forEach(file=>{
+    const r=new FileReader();
+    r.onload=e=>{
+      tmp[key].push(e.target.result);
+      loaded++;
+      if(loaded===files.length) renderPP(pmap[key],key);
+    };
+    r.onerror=()=>{loaded++;if(loaded===files.length)renderPP(pmap[key],key);};
+    r.readAsDataURL(file);
+  });
+  try{input.value='';}catch(e){}
+}
+function renderPP(elId,key){
+  const el=document.getElementById(elId);if(!el)return;
+  const pmap={v:'v',da:'da',dc:'dc',rq:'rq'};
+  el.innerHTML=tmp[key].map((p,i)=>`<div class="pp2"><img src="${p}" onclick="lb('${p}')"><button class="prm" onclick="rmP('${key}',${i})">✕</button></div>`).join('');
+}
+function rmP(key,idx){tmp[key].splice(idx,1);const pmap={v:'vpp',da:'da-pp',dc:'dc-pp',rq:'rq-pp'};renderPP(pmap[key],key);}
+function lb(src){document.getElementById('lb-img').src=src;openM('m-lb');}
+
+// ═══════════════════════════════
+// UTILS
+// ═══════════════════════════════
+function log(user,action,detail){
+  if(!ST.actLog)ST.actLog=[];
+  ST.actLog.unshift({ts:new Date().toISOString(),user,action,detail});
+  if(ST.actLog.length>200)ST.actLog=ST.actLog.slice(0,200);
+}
+function openM(id){document.getElementById(id)?.classList.add('open');}
+function closeM(id){document.getElementById(id)?.classList.remove('open');}
+document.querySelectorAll('.mo').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o&&o.id==='m-lb')closeM('m-lb');});});
+let _tt;
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show'+(type?' '+type:'');
+  clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
