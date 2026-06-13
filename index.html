@@ -1134,7 +1134,7 @@ function openV(vid,isAdmin){
   document.getElementById('mv-typ2').textContent=selV.type;
   document.getElementById('mv-nt2').textContent=selV.notes||'—';
   document.getElementById('mv-notes').value=selV.notes||'';
-  document.getElementById('mv-rm').style.display=isAdmin?'':'none';
+  document.getElementById('mv-rm').style.display='inline-flex';
   tmp.v=[...(selV.photos||[])];
   renderPP('vpp','v');
   ['mk-n','mk-w','mk-d'].forEach(id=>document.getElementById(id).classList.remove('sel'));
@@ -1188,12 +1188,22 @@ function saveEditV(){
   toast('Vehicle updated','ok');
 }
 function removeV(){
-  if(!selV||!selVIsAdmin) return;
-  if(!confirm(`Remove ${selV.id}?`)) return;
-  const c=ST.clients.find(x=>x.id===viewCid); if(!c) return;
-  c.vehicles=c.vehicles.filter(v=>v.id!==selV.id);
-  log('admin','Vehicle Removed',selV.id+' from '+c.name);
-  save();closeM('m-v');viewClient(viewCid);toast(selV.id+' removed','ok');
+  if(!selV) return;
+  if(!confirm('Remove '+selV.id+' from fleet?')) return;
+  // Get fresh client reference — myC can become stale after cloud sync
+  const c = selVIsAdmin
+    ? ST.clients.find(x=>x.id===viewCid)
+    : (myC ? ST.clients.find(x=>x.id===myC.id) : null);
+  if(!c){toast('Could not find fleet — try again','err');return;}
+  c.vehicles = c.vehicles.filter(v=>v.id!==selV.id);
+  // Keep myC in sync
+  if(!selVIsAdmin) myC = c;
+  log(me,'Vehicle Removed', selV.id + (selVIsAdmin?' from '+c.name:''));
+  save();
+  closeM('m-v');
+  if(selVIsAdmin) viewClient(viewCid);
+  else renderCFleet();
+  toast(selV.id+' removed','ok');
 }
 function addVA(){
   const c=ST.clients.find(x=>x.id===viewCid); if(!c) return;
