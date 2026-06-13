@@ -255,8 +255,9 @@ input,textarea,select,button{font-family:var(--fb);-webkit-appearance:none}
 <!-- ADMIN -->
 <div class="screen" id="s-admin">
   <div class="ah">
-    <div><div class="al">✦ GSD</div><div class="ar2">Admin · Christ Pierre</div></div>
+    <div><div class="al">✦ GSD</div><div class="ar2" id="sync-status">Admin · Christ Pierre</div></div>
     <div style="display:flex;align-items:center;gap:8px">
+      <button class="btn-lo" onclick="manualSync()">↻ Sync</button>
       <button class="btn-lo" onclick="logout()">Sign Out</button>
     </div>
   </div>
@@ -789,13 +790,48 @@ input,textarea,select,button{font-family:var(--fb);-webkit-appearance:none}
 // ═══════════════════════════════
 // STATE
 // ═══════════════════════════════
+const SUPA_URL='https://dgbuqrqzumnozxzgsero.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRnYnVxcnF6dW1ub3p4emdzZXJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMDU3NzEsImV4cCI6MjA5Njg4MTc3MX0.LR04UcjUVtjOYMec973s2us42M7sOhImRs2sBb-fJwU';
 const APASS_DEFAULT='gsd2026';
+
 function defState(){
-  return {
-    adminPass:APASS_DEFAULT,
-    actLog:[],
-    clients:[]
-  };
+  return {adminPass:APASS_DEFAULT,actLog:[],clients:[]};
+}
+
+// ── SUPABASE SYNC ──
+async function loadFromCloud(){
+  try{
+    const res=await fetch(SUPA_URL+'/rest/v1/portal_data?id=eq.main&select=data',{
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    });
+    const rows=await res.json();
+    if(rows&&rows[0]&&rows[0].data){
+      ST=rows[0].data;
+      // migrate: ensure adminPass exists
+      if(!ST.adminPass) ST.adminPass=APASS_DEFAULT;
+      if(!ST.actLog) ST.actLog=[];
+      if(!ST.clients) ST.clients=[];
+      localStorage.setItem('gsd_fleet_v1',JSON.stringify(ST));
+      return true;
+    }
+  }catch(e){console.warn('Cloud load failed:',e);}
+  return false;
+}
+
+async function saveToCloud(){
+  try{
+    // upsert the entire state as one JSON blob
+    await fetch(SUPA_URL+'/rest/v1/portal_data',{
+      method:'POST',
+      headers:{
+        'apikey':SUPA_KEY,
+        'Authorization':'Bearer '+SUPA_KEY,
+        'Content-Type':'application/json',
+        'Prefer':'resolution=merge-duplicates'
+      },
+      body:JSON.stringify({id:'main',data:ST,updated_at:new Date().toISOString()})
+    });
+  }catch(e){console.warn('Cloud save failed — saved locally only:',e);}
 }
 
 function defVehicles(){
@@ -805,11 +841,47 @@ function defVehicles(){
   return v;
 }
 
+// Load from localStorage immediately (fast), then sync from cloud
 let ST=(()=>{try{const s=localStorage.getItem('gsd_fleet_v1');return s?JSON.parse(s):defState();}catch(e){return defState();}})();
 let me=null,myC=null,selV=null,viewCid=null,selVIsAdmin=false;
+let _saveTimer=null;
 const tmp={v:[],da:[],dc:[],rq:[]};
 
-function save(){try{localStorage.setItem('gsd_fleet_v1',JSON.stringify(ST));}catch(e){}}
+function save(){
+  // Save locally immediately for speed
+  try{localStorage.setItem('gsd_fleet_v1',JSON.stringify(ST));}catch(e){}
+  // Debounce cloud save — wait 800ms after last change to batch writes
+  clearTimeout(_saveTimer);
+  _saveTimer=setTimeout(()=>saveToCloud(),800);
+}
+
+// Auto-refresh from cloud every 30 seconds (so everyone sees updates)
+let _refreshInterval=null;
+function startAutoRefresh(){
+  if(_refreshInterval) clearInterval(_refreshInterval);
+  _refreshInterval=setInterval(async()=>{
+    const ok=await loadFromCloud();
+    if(ok){
+      // Update myC reference if client is logged in
+      if(me&&me!=='admin'){
+        myC=ST.clients.find(x=>x.code===me)||null;
+      }
+      // Re-render current view silently
+      const activePg=document.querySelector('#s-admin .pg.active, #s-client .pg.active');
+      if(activePg){
+        if(activePg.id==='ap-dash') renderDash();
+        else if(activePg.id==='ap-clients') renderClients();
+        else if(activePg.id==='ap-cd'&&viewCid) viewClient(viewCid);
+        else if(activePg.id==='ap-requests') renderAllReq();
+        else if(activePg.id==='ap-damages') renderAllDmg();
+        else if(activePg.id==='cp-fleet') renderCFleet();
+        else if(activePg.id==='cp-profile') renderCProfile();
+        else if(activePg.id==='cp-damages') renderCDmg();
+        else if(activePg.id==='cp-history') renderCHistory();
+      }
+    }
+  },30000);
+}
 
 // ═══════════════════════════════
 // AUTH
@@ -820,23 +892,35 @@ function ltab(t,el){
   document.getElementById('lf-a').style.display=t==='admin'?'':'none';
   document.getElementById('lf-c').style.display=t==='client'?'':'none';
 }
-function loginA(){
+async function loginA(){
   const p=document.getElementById('ap').value;
+  const btn=document.querySelector('#lf-a .btn-l');
+  if(btn){btn.textContent='Syncing...';btn.disabled=true;}
+  // Always pull latest from cloud before checking password
+  await loadFromCloud();
+  if(btn){btn.textContent='Sign In as Admin';btn.disabled=false;}
   if(p!==ST.adminPass){toast('Incorrect password','err');log('admin','Failed Login','Wrong password');save();return;}
-  me='admin';log('admin','Login','Admin signed in');save();showS('s-admin');renderDash();
+  me='admin';log('admin','Login','Admin signed in');save();
+  showS('s-admin');renderDash();startAutoRefresh();
   setTimeout(()=>{const n=document.getElementById('anav');if(n){n.scrollLeft=n.scrollWidth;setTimeout(()=>n.scrollLeft=0,500);}},700);
 }
-function loginC(){
+async function loginC(){
   const code=document.getElementById('cc').value.trim().toUpperCase();
+  const btn=document.querySelector('#lf-c .btn-l');
+  if(btn){btn.textContent='Connecting...';btn.disabled=true;}
+  // Pull latest from cloud so we always have current client list
+  await loadFromCloud();
+  if(btn){btn.textContent='Access My Fleet';btn.disabled=false;}
   const c=ST.clients.find(x=>x.code===code);
   if(!c){toast('Client code not found','err');log('?','Failed Login','Bad code: '+code);save();return;}
   if(c.disabled){toast('Access disabled — contact Gold Service Detailing','err');log(code,'Blocked',c.name+' blocked');save();return;}
   me=code;myC=c;log(code,'Login',c.name+' signed in');save();
   document.getElementById('cl-nm').textContent=c.name;
   document.getElementById('cl-role').textContent=c.contract;
-  showS('s-client');renderCFleet();
+  showS('s-client');renderCFleet();startAutoRefresh();
 }
 function logout(){
+  if(_refreshInterval){clearInterval(_refreshInterval);_refreshInterval=null;}
   if(me) log(me,'Logout',me==='admin'?'Admin signed out':(myC?.name||me)+' signed out');
   save();me=null;myC=null;selV=null;viewCid=null;
   showS('s-login');
@@ -1395,6 +1479,30 @@ function chgPass(){
   toast('Password updated','ok');
 }
 function cpCode(code){navigator.clipboard.writeText(code).then(()=>toast('Copied: '+code,'ok')).catch(()=>toast('Code: '+code,'ok'));}
+async function manualSync(){
+  const el=document.getElementById('sync-status');
+  if(el) el.textContent='Syncing...';
+  const ok=await loadFromCloud();
+  if(ok){
+    if(me&&me!=='admin') myC=ST.clients.find(x=>x.code===me)||null;
+    const activePg=document.querySelector('#s-admin .pg.active');
+    if(activePg){
+      if(activePg.id==='ap-dash') renderDash();
+      else if(activePg.id==='ap-clients') renderClients();
+      else if(activePg.id==='ap-cd'&&viewCid) viewClient(viewCid);
+      else if(activePg.id==='ap-requests') renderAllReq();
+      else if(activePg.id==='ap-damages') renderAllDmg();
+      else if(activePg.id==='ap-settings') renderSettings();
+    }
+    if(el) el.textContent='✓ Synced · Admin';
+    setTimeout(()=>{if(el) el.textContent='Admin · Christ Pierre';},2000);
+    toast('Synced from cloud ✓','ok');
+  } else {
+    if(el) el.textContent='Admin · Christ Pierre';
+    toast('Sync failed — check connection','err');
+  }
+}
+
 function exportData(){const b=new Blob([JSON.stringify(ST,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='GSD-Portal-'+new Date().toISOString().split('T')[0]+'.json';a.click();log('admin','Data Export','JSON export');save();toast('Exported','ok');}
 function resetPortal(){if(!confirm('Reset ALL portal data? Cannot be undone.'))return;localStorage.removeItem('gsd_fleet_v1');ST=defState();save();toast('Portal reset','ok');logout();}
 
