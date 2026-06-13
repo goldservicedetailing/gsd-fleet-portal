@@ -303,6 +303,14 @@ input,textarea,select,button{font-family:var(--fb);-webkit-appearance:none}
         </div>
       </div>
       <div class="g4 mb12" id="cd-kpis"></div>
+      <!-- Mini Profile Card -->
+      <div class="card cg mb12" id="cd-profile-card">
+        <div class="fb mb12">
+          <div style="font-weight:700;font-size:.9rem">Client Profile</div>
+          <button class="btn bo bsm" onclick="openEditClient()">✏️ Edit</button>
+        </div>
+        <div id="cd-profile-info"></div>
+      </div>
       <div class="card mb12">
         <div class="fb mb8"><div style="font-weight:700;font-size:.88rem">Fleet Vehicles</div><div id="cd-fc" style="font-family:var(--fm);font-size:.7rem;color:var(--t2)"></div></div>
         <div class="leg">
@@ -518,6 +526,8 @@ input,textarea,select,button{font-family:var(--fb);-webkit-appearance:none}
     <select id="ev-typ">
       <option>EDV — Amazon Electric Delivery Vehicle</option>
       <option>XL — Amazon Standard Delivery Van</option>
+      <option>CDV — Cargo Delivery Van</option>
+      <option>Step Van</option>
       <option>Box Truck</option><option>Sprinter Van</option><option>Cargo Van</option>
       <option>Pickup Truck</option><option>Semi / Tractor</option><option>Other</option>
     </select>
@@ -540,6 +550,8 @@ input,textarea,select,button{font-family:var(--fb);-webkit-appearance:none}
     <select id="ava-typ">
       <option>EDV — Amazon Electric Delivery Vehicle</option>
       <option>XL — Amazon Standard Delivery Van</option>
+      <option>CDV — Cargo Delivery Van</option>
+      <option>Step Van</option>
       <option>Box Truck</option><option>Sprinter Van</option><option>Cargo Van</option>
       <option>Pickup Truck</option><option>Semi / Tractor</option><option>Other</option>
     </select>
@@ -562,6 +574,8 @@ input,textarea,select,button{font-family:var(--fb);-webkit-appearance:none}
     <select id="avc-typ">
       <option>EDV — Amazon Electric Delivery Vehicle</option>
       <option>XL — Amazon Standard Delivery Van</option>
+      <option>CDV — Cargo Delivery Van</option>
+      <option>Step Van</option>
       <option>Box Truck</option><option>Sprinter Van</option><option>Cargo Van</option>
       <option>Pickup Truck</option><option>Semi / Tractor</option><option>Other</option>
     </select>
@@ -582,18 +596,7 @@ input,textarea,select,button{font-family:var(--fb);-webkit-appearance:none}
   <div class="fr"><label>Phone</label><input type="tel" id="ac-ph" placeholder="(732) 000-0000"></div>
   <div class="fr"><label>Email</label><input type="email" id="ac-em" placeholder="fleet@company.com"></div>
   <div class="fr"><label>Client Login Code</label><input type="text" id="ac-cd" placeholder="e.g. MVP001, FLEET01" style="text-transform:uppercase"></div>
-  <div class="fr"><label>Contract Type</label>
-    <select id="ac-co">
-      <option>Bi-Weekly Interior Only — $35.75/vehicle</option>
-      <option>Bi-Weekly Interior + Exterior — $45/vehicle</option>
-      <option>Monthly Interior Only — $45/vehicle</option>
-      <option>Monthly Interior + Exterior — $60/vehicle</option>
-      <option>One-Time + Monthly Retainer — $500/mo (20 vehicles)</option>
-      <option>Custom</option>
-    </select>
-  </div>
-  <div class="fr"><label>Monthly Rate ($)</label><input type="number" id="ac-rt" placeholder="e.g. 700.00"></div>
-  <div class="fr"><label>Next Payment Due</label><input type="date" id="ac-pd"></div>
+
   <div class="fa">
     <button class="btn bgh" onclick="closeM('m-add-client')">Cancel</button>
     <button class="btn bg" style="flex:1" onclick="addClient()">Create Client</button>
@@ -903,6 +906,17 @@ function viewClient(id){
     {l:'Damage',v:dmg,col:'var(--red)'},{l:'Requests',v:req,col:'var(--blue)'}
   ].map(k=>`<div class="card"><div class="kv" style="color:${k.col}">${k.v}</div><div class="kl">${k.l}</div></div>`).join('');
   document.getElementById('cd-fc').textContent=`${c.vehicles.filter(v=>v.type.includes('EDV')).length} EDV · ${c.vehicles.filter(v=>v.type.includes('XL')).length} XL`;
+  // Mini profile card
+  const pCard=document.getElementById('cd-profile-info');
+  if(pCard) pCard.innerHTML=`
+    <div class="vdr"><span class="vdl">Contact</span><span class="vdv" style="font-family:var(--fb)">${c.contact||'—'}</span></div>
+    <div class="vdr"><span class="vdl">Phone</span><span class="vdv">${c.phone||'—'}</span></div>
+    <div class="vdr"><span class="vdl">Email</span><span class="vdv" style="font-family:var(--fb);font-size:.8rem">${c.email||'—'}</span></div>
+    <div class="vdr"><span class="vdl">Login Code</span><span class="vdv" style="color:var(--gold)">${c.code}</span></div>
+    <div class="vdr"><span class="vdl">Contract</span><span class="vdv" style="font-family:var(--fb);font-size:.78rem">${c.contract||'Not set'}</span></div>
+    <div class="vdr"><span class="vdl">Monthly Rate</span><span class="vdv">${c.monthlyRate?'$'+parseFloat(c.monthlyRate).toFixed(2):'Not set'}</span></div>
+    <div class="vdr"><span class="vdl">Next Payment</span><span class="vdv">${c.nextPayment?new Date(c.nextPayment+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'Not set'}</span></div>
+    <div class="vdr" style="border:none"><span class="vdl">Agreement</span><span style="font-size:.8rem;color:var(--t2)">${c.agreementNotes||'—'}</span></div>`;
   document.getElementById('cd-v').innerHTML=c.vehicles.map(v=>vCard(v,true)).join('');
   // Damage
   document.getElementById('cd-d').innerHTML=c.damages.length
@@ -952,15 +966,14 @@ function addClient(){
   const code=document.getElementById('ac-cd').value.trim().toUpperCase();
   if(!nm||!code){toast('Name and code required','err');return;}
   if(ST.clients.find(c=>c.code===code)){toast('Code in use','err');return;}
-  const rt=parseFloat(document.getElementById('ac-rt').value)||0;
   ST.clients.push({
     id:'c'+Date.now(),code,name:nm,
     contact:document.getElementById('ac-ct').value.trim(),
     phone:document.getElementById('ac-ph').value.trim(),
     email:document.getElementById('ac-em').value.trim(),
-    contract:document.getElementById('ac-co').value,
-    monthlyRate:rt,
-    nextPayment:document.getElementById('ac-pd').value,
+    contract:'',
+    monthlyRate:0,
+    nextPayment:'',
     agreementNotes:'',disabled:false,
     vehicles:[],damages:[],requests:[],payments:[],serviceHistory:[]
   });
