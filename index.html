@@ -521,10 +521,11 @@ input,textarea,select,button{font-family:var(--fb);-webkit-appearance:none}
     <button class="btn bbl bsm" onclick="quickRequest()">Request</button>
   </div>
   <textarea id="mv-req-note" placeholder="Optional note for this request..." style="width:100%;background:var(--s3);border:1px solid var(--border);border-radius:var(--r);padding:9px 12px;font-size:.85rem;color:var(--text);outline:none;margin-top:8px;resize:none;height:58px"></textarea>
-  <div class="div"></div><textarea id="mv-notes" placeholder="Special instructions, notes..."></textarea></div>
+  <div class="div"></div>
+  <textarea id="mv-notes" placeholder="Special instructions, notes..."></textarea>
   <div class="fa">
     <button class="btn bgh" style="flex:0 0 80px" onclick="closeM('m-v')">Cancel</button>
-    <button class="btn bg" style="flex:1" onclick="saveV()">Save</button>
+    <button class="btn bg" style="flex:1" onclick="saveV()">💾 Save Changes</button>
   </div>
 </div></div>
 
@@ -1210,6 +1211,7 @@ function openV(vid,isAdmin){
   document.getElementById('mv-nt2').textContent=selV.notes||'—';
   document.getElementById('mv-notes').value=selV.notes||'';
   document.getElementById('mv-rm').style.display='inline-flex';
+  document.getElementById('mv-edit-btn').style.display='flex';
   tmp.v=[...(selV.photos||[])];
   renderPP('vpp','v');
   ['mk-n','mk-w','mk-d'].forEach(id=>document.getElementById(id).classList.remove('sel'));
@@ -1247,20 +1249,30 @@ function openEditVehicle(){
 }
 function saveEditV(){
   if(!selV) return;
+  // Get fresh client reference
+  const c=selVIsAdmin
+    ? ST.clients.find(x=>x.id===viewCid)
+    : (myC ? ST.clients.find(x=>x.id===myC.id) : null);
+  if(!c){toast('Could not find fleet — try again','err');return;}
+  // Find the vehicle in ST directly
+  const v=c.vehicles.find(x=>x.id===selV.id);
+  if(!v){toast('Vehicle not found','err');return;}
   const newId=document.getElementById('ev-id').value.trim();
-  selV.id=newId||selV.id;
-  selV.plate=document.getElementById('ev-plt').value.trim().toUpperCase();
-  selV.type=document.getElementById('ev-typ').value;
-  selV.notes=document.getElementById('ev-nt').value.trim();
-  document.getElementById('mv-id').textContent=selV.id;
-  document.getElementById('mv-vid2').textContent=selV.id;
-  document.getElementById('mv-plt').textContent=selV.plate||'Not set';
-  document.getElementById('mv-typ2').textContent=selV.type;
-  document.getElementById('mv-nt2').textContent=selV.notes||'—';
-  log(me,'Vehicle Edited',selV.id);
+  v.id=newId||v.id;
+  v.plate=document.getElementById('ev-plt').value.trim().toUpperCase();
+  v.type=document.getElementById('ev-typ').value;
+  v.notes=document.getElementById('ev-nt').value.trim();
+  selV=v;
+  if(!selVIsAdmin) myC=c;
+  document.getElementById('mv-id').textContent=v.id;
+  document.getElementById('mv-vid2').textContent=v.id;
+  document.getElementById('mv-plt').textContent=v.plate||'Not set';
+  document.getElementById('mv-typ2').textContent=v.type;
+  document.getElementById('mv-nt2').textContent=v.notes||'—';
+  log(me,'Vehicle Edited',v.id);
   save();closeM('m-ev');
-  if(selVIsAdmin)viewClient(viewCid); else renderCFleet();
-  toast('Vehicle updated','ok');
+  if(selVIsAdmin) viewClient(viewCid); else renderCFleet();
+  toast('Vehicle updated ✓','ok');
 }
 function removeV(){
   if(!selV) return;
