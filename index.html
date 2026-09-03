@@ -505,24 +505,60 @@ function defState(){
 
 // ── JSONBIN SYNC ──
 async function loadFromCloud(){
+  const empty={actLog:[],clients:[]};
+
+  async function seedBin(){
+    try{
+      await fetch(JB_URL,{method:'PUT',
+        headers:{'X-Master-Key':JB_KEY,'Content-Type':'application/json'},
+        body:JSON.stringify(empty)});
+      ST=empty;
+      localStorage.setItem('gsd_fleet_v1',JSON.stringify(ST));
+      return true;
+    }catch(e){return false;}
+  }
+
   try{
     const res=await fetch(JB_URL+'/latest',{
       headers:{'X-Master-Key':JB_KEY,'X-Bin-Meta':'false'}
     });
+
+    // 404 = bin empty — seed automatically, no manual console fix needed
+    if(res.status===404){ return await seedBin(); }
     if(!res.ok) throw new Error('HTTP '+res.status);
+
     const data=await res.json();
     if(data&&data.clients!==undefined){
       ST=data;
-      if(!ST.actLog)    ST.actLog=[];
-      if(!ST.clients)   ST.clients=[];
+      if(!ST.actLog)  ST.actLog=[];
+      if(!ST.clients) ST.clients=[];
+      ST.clients.forEach(cl=>{
+        if(!cl.vehicles) cl.vehicles=[];
+        if(!cl.damages)  cl.damages=[];
+        if(!cl.requests) cl.requests=[];
+        if(!cl.payments) cl.payments=[];
+        if(!cl.services) cl.services=[];
+      });
       localStorage.setItem('gsd_fleet_v1',JSON.stringify(ST));
       return true;
     }
-  }catch(e){console.warn('Cloud load failed:',e);}
+  }catch(e){
+    console.warn('Cloud load failed:',e);
+    // Fall back to localStorage so the portal still works offline
+    try{
+      const cached=localStorage.getItem('gsd_fleet_v1');
+      if(cached){ ST=JSON.parse(cached); return true; }
+    }catch(ce){}
+    ST=empty;
+  }
   return false;
 }
 
 async function saveToCloud(){
+  // Write to localStorage immediately — works offline, no delay
+  try{localStorage.setItem('gsd_fleet_v1',JSON.stringify(ST));}catch(e){}
+
+  // Push to JSONBin
   try{
     const res=await fetch(JB_URL,{
       method:'PUT',
@@ -531,13 +567,12 @@ async function saveToCloud(){
     });
     if(!res.ok) throw new Error('HTTP '+res.status);
     const now=new Date().toISOString();
-    localStorage.setItem('gsd_last_cloud_save',now);
     const el=document.getElementById('last-save-time');
-    if(el) el.textContent='Last sync: '+new Date(now).toLocaleTimeString();
+    if(el) el.textContent='Synced: '+new Date(now).toLocaleTimeString();
   }catch(e){
     console.warn('Cloud save failed:',e);
     const el=document.getElementById('last-save-time');
-    if(el) el.textContent='⚠ Sync failed — check connection';
+    if(el) el.textContent='⚠ Saved locally — sync failed';
   }
 }
 
