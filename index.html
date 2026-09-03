@@ -32,8 +32,6 @@ input,textarea,select,button{font-family:var(--fb);-webkit-appearance:none}
 .l-logo{font-family:var(--fd);font-size:3rem;color:var(--gold);letter-spacing:5px;text-align:center;line-height:1}
 .l-tag{font-family:var(--fm);font-size:0.58rem;letter-spacing:4px;text-transform:uppercase;color:var(--t3);text-align:center;margin:4px 0 32px}
 .ltabs{display:flex;background:var(--s2);border-radius:var(--r);overflow:hidden;margin-bottom:22px;border:1px solid var(--border)}
-.ltab{flex:1;padding:11px;text-align:center;font-size:0.8rem;font-weight:600;cursor:pointer;color:var(--t2);transition:all .2s}
-.ltab.active{background:var(--gold);color:var(--black)}
 .fl{margin-bottom:14px}
 .fl label{display:block;font-size:0.67rem;font-weight:700;color:var(--t2);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
 .fi{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;font-size:0.9rem;color:var(--text);outline:none;transition:border-color .2s}
@@ -236,155 +234,12 @@ input,textarea,select,button{font-family:var(--fb);-webkit-appearance:none}
 <div class="screen active" id="s-login">
 <div class="lw">
   <div class="l-logo">✦ GSD</div>
-  <div class="l-tag">My Fleet Portal</div>
-  <div class="ltabs">
-    <div class="ltab active" onclick="ltab('admin',this)">Admin</div>
-    <div class="ltab" onclick="ltab('client',this)">Client</div>
-  </div>
-  <div id="lf-a">
-    <div class="fl"><label>Admin Password</label><input class="fi" type="password" id="ap" placeholder="Enter password" onkeydown="if(event.key==='Enter')loginA()"></div>
-    <button class="btn-l" onclick="loginA()">Sign In as Admin</button>
-  </div>
-  <div id="lf-c" style="display:none">
+  <div class="l-tag">Client Portal</div>
+  <div id="lf-c">
     <div class="fl"><label>Client Code</label><input class="fi" type="text" id="cc" placeholder="Your client code" autocomplete="off" onkeydown="if(event.key==='Enter')loginC()"></div>
     <button class="btn-l" onclick="loginC()">Access My Fleet</button>
   </div>
 </div>
-</div>
-
-<!-- ADMIN -->
-<div class="screen" id="s-admin">
-  <div class="ah">
-    <div><div class="al">✦ GSD</div><div class="ar2" id="sync-status">Admin · Christ Pierre</div></div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <button class="btn-lo" onclick="manualSync()">↻ Sync</button>
-      <button class="btn-lo" onclick="logout()">Sign Out</button>
-    </div>
-  </div>
-  <div class="nav" id="anav">
-    <div class="nt active" onclick="ap('dash',this)">⚡ Dashboard</div>
-    <div class="nt" onclick="ap('clients',this)">👥 Clients</div>
-    <div class="nt" onclick="ap('requests',this)">📋 Requests</div>
-    <div class="nt" onclick="ap('damages',this)">🛡 Damages</div>
-    <div class="nt" onclick="ap('settings',this)">⚙️ Settings</div>
-  </div>
-  <div class="ab">
-
-    <!-- DASHBOARD -->
-    <div class="pg active" id="ap-dash">
-      <div class="ey mb8">Overview</div><div class="st mb12">COMMAND CENTER</div>
-      <div class="g4 mb16" id="a-kpis"></div>
-      <div class="card cg mb12">
-        <div style="font-weight:700;font-size:.88rem;margin-bottom:12px">🔴 Active Alerts</div>
-        <div id="a-ap"></div>
-      </div>
-      <div class="card">
-        <div class="fb mb12"><div style="font-weight:700;font-size:.88rem">Pending Requests</div><button class="btn bo bsm" onclick="ap('requests',null)">See All</button></div>
-        <div id="a-rp"></div>
-      </div>
-    </div>
-
-    <!-- CLIENTS LIST -->
-    <div class="pg" id="ap-clients">
-      <div class="fb mb16">
-        <div><div class="ey">Fleet Accounts</div><div class="st">CLIENTS</div></div>
-        <button class="btn bg" onclick="openM('m-add-client')">+ Add Client</button>
-      </div>
-      <div id="a-cl"></div>
-    </div>
-
-    <!-- CLIENT DETAIL -->
-    <div class="pg" id="ap-cd">
-      <div class="fb mb16">
-        <div>
-          <button class="btn bgh bsm mb8" onclick="ap('clients',null)">← Back</button>
-          <div class="ey" id="cd-ey"></div><div class="st" id="cd-t"></div><div class="ss" id="cd-s"></div>
-        </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn bg bsm" onclick="openM('m-av-a')">+ Vehicle</button>
-          <button class="btn bo bsm" onclick="openM('m-log-dmg-a')">+ Damage</button>
-          <button class="btn bgh bsm" onclick="openEditClient()">Edit</button>
-        </div>
-      </div>
-      <div class="g4 mb12" id="cd-kpis"></div>
-      <!-- Mini Profile Card -->
-      <div class="card cg mb12" id="cd-profile-card">
-        <div class="fb mb12">
-          <div style="font-weight:700;font-size:.9rem">Client Profile</div>
-          <button class="btn bo bsm" onclick="openEditClient()">✏️ Edit</button>
-        </div>
-        <div id="cd-profile-info"></div>
-      </div>
-      <div class="card mb12">
-        <div class="fb mb8"><div style="font-weight:700;font-size:.88rem">Fleet Vehicles</div><div id="cd-fc" style="font-family:var(--fm);font-size:.7rem;color:var(--t2)"></div></div>
-        <div class="leg">
-          <div class="li"><div class="ld" style="background:var(--orange)"></div>Needs Cleaning</div>
-          <div class="li"><div class="ld" style="background:var(--green)"></div>Can Wait/Clean</div>
-          <div class="li"><div class="ld" style="background:var(--red)"></div>Damage</div>
-        </div>
-        <div class="vg" id="cd-v"></div>
-      </div>
-      <div class="card mb12"><div class="fb mb12"><div style="font-weight:700;font-size:.88rem">Damage Reports</div></div><div id="cd-d"></div></div>
-      <div class="card"><div class="fb mb12"><div style="font-weight:700;font-size:.88rem">Extra Work Requests</div></div><div id="cd-r"></div></div>
-    </div>
-
-<!-- REQUESTS -->
-    <div class="pg" id="ap-requests">
-      <div class="ey mb8">Outside Scope</div><div class="st mb16">EXTRA WORK REQUESTS</div>
-      <div id="a-req"></div>
-    </div>
-
-    <!-- DAMAGES -->
-    <div class="pg" id="ap-damages">
-      <div class="ey mb8">Pre-Existing</div><div class="st mb16">DAMAGE LOG</div>
-      <div id="a-dmg"></div>
-    </div>
-
-    <!-- SETTINGS -->
-    <div class="pg" id="ap-settings">
-      <div class="ey mb8">Admin Control</div><div class="st mb16">SITE SETTINGS</div>
-      <div class="card cg mb12">
-        <div style="font-weight:700;font-size:.9rem;margin-bottom:12px">🔐 Admin Password</div>
-        <div class="fr"><label>Current Password</label><input type="password" id="scp" placeholder="Current password"></div>
-        <div class="fr"><label>New Password</label><input type="password" id="snp" placeholder="New password"></div>
-        <div class="fr"><label>Confirm New</label><input type="password" id="scp2" placeholder="Confirm"></div>
-        <button class="btn bg bsm" onclick="chgPass()">Update Password</button>
-      </div>
-      <div class="card mb12">
-        <div style="font-weight:700;font-size:.9rem;margin-bottom:4px">🚦 Client Access Control</div>
-        <div style="font-size:.78rem;color:var(--t2);margin-bottom:14px">Enable or disable each client's portal access</div>
-        <div id="s-ac"></div>
-      </div>
-      <div class="card mb12">
-        <div style="font-weight:700;font-size:.9rem;margin-bottom:4px">🗝 Client Login Codes</div>
-        <div style="font-size:.78rem;color:var(--t2);margin-bottom:12px">Share these codes with clients to log in</div>
-        <div id="s-codes"></div>
-      </div>
-      <div class="card mb12">
-        <div style="font-weight:700;font-size:.9rem;margin-bottom:4px">📋 Site Activity Log</div>
-        <div style="font-size:.78rem;color:var(--t2);margin-bottom:12px">All logins, actions, and changes</div>
-        <div id="s-log" style="max-height:300px;overflow-y:auto"></div>
-      </div>
-      <div class="card" style="border-color:var(--gold)">
-        <div style="font-weight:700;font-size:.9rem;color:var(--gold);margin-bottom:4px">💾 Backup & Restore</div>
-        <div style="font-size:.78rem;color:var(--t2);margin-bottom:4px">Your data is saved to the cloud on every change. Download a local backup anytime — if you ever lose data, restore it in one tap.</div>
-        <div style="font-size:.72rem;color:var(--gold);margin-bottom:12px" id="last-save-time">Last cloud save: checking...</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn bgh bsm" onclick="exportBackup()">📥 Download Backup</button>
-          <button class="btn bo bsm" onclick="importBackup()">📤 Restore from Backup</button>
-          <button class="btn bgh bsm" onclick="manualSync()">☁️ Force Cloud Sync</button>
-        </div>
-      </div>
-      <div class="card" style="border-color:var(--rb)">
-        <div style="font-weight:700;font-size:.9rem;color:var(--red);margin-bottom:4px">⚠️ Danger Zone</div>
-        <div style="font-size:.78rem;color:var(--t2);margin-bottom:12px">Permanently delete all portal data. This cannot be undone.</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn bre bsm" onclick="resetPortal()">🗑 Reset All Data</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <!-- CLIENT -->
@@ -529,166 +384,7 @@ input,textarea,select,button{font-family:var(--fb);-webkit-appearance:none}
   </div>
 </div></div>
 
-<!-- Edit Vehicle Info -->
-<div class="mo" id="m-ev"><div class="md">
-  <button class="mx" onclick="closeM('m-ev')">✕</button>
-  <div class="mt2">EDIT VEHICLE</div>
-  <div class="ms">Update vehicle information</div>
-  <div class="fr"><label>Vehicle ID / Unit #</label><input type="text" id="ev-id" placeholder="e.g. EV12, VAN-07"></div>
-  <div class="fr"><label>License Plate</label><input type="text" id="ev-plt" placeholder="e.g. ABC-1234" style="text-transform:uppercase"></div>
-  <div class="fr"><label>Vehicle Type</label>
-    <select id="ev-typ">
-      <option>EDV — Amazon Electric Delivery Vehicle</option>
-      <option>XL — Amazon Standard Delivery Van</option>
-      <option>CDV — Cargo Delivery Van</option>
-      <option>Step Van</option>
-      <option>Box Truck</option><option>Sprinter Van</option><option>Cargo Van</option>
-      <option>Pickup Truck</option><option>Semi / Tractor</option><option>Other</option>
-    </select>
-  </div>
-  <div class="fr"><label>Notes</label><input type="text" id="ev-nt" placeholder="Special instructions, notes..."></div>
-  <div class="fa">
-    <button class="btn bgh" onclick="closeM('m-ev')">Cancel</button>
-    <button class="btn bg" style="flex:1" onclick="saveEditV()">Save Changes</button>
-  </div>
-</div></div>
 
-<!-- Add Vehicle Admin -->
-<div class="mo" id="m-av-a"><div class="md">
-  <button class="mx" onclick="closeM('m-av-a')">✕</button>
-  <div class="mt2">ADD VEHICLE</div>
-  <div class="ms" id="m-av-a-sub">Adding to fleet</div>
-  <div class="fr"><label>Vehicle ID / Unit #</label><input type="text" id="ava-id" placeholder="e.g. EV12, VAN-07, TRUCK-3"></div>
-  <div class="fr"><label>License Plate</label><input type="text" id="ava-plt" placeholder="e.g. ABC-1234" style="text-transform:uppercase"></div>
-  <div class="fr"><label>Vehicle Type</label>
-    <select id="ava-typ">
-      <option>EDV — Amazon Electric Delivery Vehicle</option>
-      <option>XL — Amazon Standard Delivery Van</option>
-      <option>CDV — Cargo Delivery Van</option>
-      <option>Step Van</option>
-      <option>Box Truck</option><option>Sprinter Van</option><option>Cargo Van</option>
-      <option>Pickup Truck</option><option>Semi / Tractor</option><option>Other</option>
-    </select>
-  </div>
-  <div class="fr"><label>Notes</label><input type="text" id="ava-nt" placeholder="Special instructions, notes..."></div>
-  <div class="fa">
-    <button class="btn bgh" onclick="closeM('m-av-a')">Cancel</button>
-    <button class="btn bg" style="flex:1" onclick="addVA()">Add Vehicle</button>
-  </div>
-</div></div>
-
-<!-- Add Vehicle Client -->
-<div class="mo" id="m-av-c"><div class="md">
-  <button class="mx" onclick="closeM('m-av-c')">✕</button>
-  <div class="mt2">ADD VEHICLE</div>
-  <div class="ms">Add a vehicle to your fleet</div>
-  <div class="fr"><label>Vehicle ID / Unit #</label><input type="text" id="avc-id" placeholder="e.g. EV12, VAN-07"></div>
-  <div class="fr"><label>License Plate</label><input type="text" id="avc-plt" placeholder="e.g. ABC-1234" style="text-transform:uppercase"></div>
-  <div class="fr"><label>Vehicle Type</label>
-    <select id="avc-typ">
-      <option>EDV — Amazon Electric Delivery Vehicle</option>
-      <option>XL — Amazon Standard Delivery Van</option>
-      <option>CDV — Cargo Delivery Van</option>
-      <option>Step Van</option>
-      <option>Box Truck</option><option>Sprinter Van</option><option>Cargo Van</option>
-      <option>Pickup Truck</option><option>Semi / Tractor</option><option>Other</option>
-    </select>
-  </div>
-  <div class="fr"><label>Notes</label><input type="text" id="avc-nt" placeholder="Special instructions, notes..."></div>
-  <div class="fa">
-    <button class="btn bgh" onclick="closeM('m-av-c')">Cancel</button>
-    <button class="btn bg" style="flex:1" onclick="addVC()">Add Vehicle</button>
-  </div>
-</div></div>
-
-<!-- Add Client -->
-<div class="mo" id="m-add-client"><div class="md">
-  <button class="mx" onclick="closeM('m-add-client')">✕</button>
-  <div class="mt2">ADD CLIENT</div><div class="ms">Create a new fleet client account</div>
-  <div class="fr"><label>Company Name</label><input type="text" id="ac-nm" placeholder="e.g. MVP Logistics LLC"></div>
-  <div class="fr"><label>Contact Name</label><input type="text" id="ac-ct" placeholder="Fleet manager or owner name"></div>
-  <div class="fr"><label>Phone</label><input type="tel" id="ac-ph" placeholder="(732) 000-0000"></div>
-  <div class="fr"><label>Email</label><input type="email" id="ac-em" placeholder="fleet@company.com"></div>
-  <div class="fr"><label>Client Login Code</label><input type="text" id="ac-cd" placeholder="e.g. MVP001, FLEET01" style="text-transform:uppercase"></div>
-
-  <div class="fa">
-    <button class="btn bgh" onclick="closeM('m-add-client')">Cancel</button>
-    <button class="btn bg" style="flex:1" onclick="addClient()">Create Client</button>
-  </div>
-</div></div>
-
-<!-- Edit Client (Admin) -->
-<div class="mo" id="m-edit-client-a"><div class="md">
-  <button class="mx" onclick="closeM('m-edit-client-a')">✕</button>
-  <div class="mt2">EDIT CLIENT</div><div class="ms">Update client account details</div>
-  <div class="fr"><label>Company Name</label><input type="text" id="eca-nm"></div>
-  <div class="fr"><label>Contact Name</label><input type="text" id="eca-ct"></div>
-  <div class="fr"><label>Phone</label><input type="tel" id="eca-ph"></div>
-  <div class="fr"><label>Email</label><input type="email" id="eca-em"></div>
-  <div class="fr"><label>Login Code</label><input type="text" id="eca-cd" style="text-transform:uppercase"></div>
-  <div class="fr"><label>Contract Type</label>
-    <select id="eca-co">
-      <option>Bi-Weekly Interior Only — $35.75/vehicle</option>
-      <option>Bi-Weekly Interior + Exterior — $45/vehicle</option>
-      <option>Monthly Interior Only — $45/vehicle</option>
-      <option>Monthly Interior + Exterior — $60/vehicle</option>
-      <option>One-Time + Monthly Retainer — $500/mo (20 vehicles)</option>
-      <option>Custom</option>
-    </select>
-  </div>
-  <div class="fr"><label>Monthly Rate ($)</label><input type="number" id="eca-rt"></div>
-  <div class="fr"><label>Next Payment Due</label><input type="date" id="eca-pd"></div>
-  <div class="fr"><label>Service Agreement Notes</label><textarea id="eca-ag" placeholder="Service scope, special terms, notes..."></textarea></div>
-  <div style="margin-top:14px;padding:12px;background:var(--rd);border:1px solid var(--rb);border-radius:var(--r)">
-    <div style="font-size:.78rem;font-weight:600;color:var(--red);margin-bottom:6px">Danger Zone</div>
-    <button class="btn bre bsm bfl" onclick="deleteClient()">🗑 Delete This Client &amp; All Data</button>
-  </div>
-  <div class="fa">
-    <button class="btn bgh" onclick="closeM('m-edit-client-a')">Cancel</button>
-    <button class="btn bg" style="flex:1" onclick="saveEditClient()">Save Changes</button>
-  </div>
-</div></div>
-
-<!-- Edit Client (Client side) -->
-<div class="mo" id="m-edit-client-c"><div class="md">
-  <button class="mx" onclick="closeM('m-edit-client-c')">✕</button>
-  <div class="mt2">EDIT MY INFO</div><div class="ms">Update your account information</div>
-  <div class="fr"><label>Contact Name</label><input type="text" id="ecc-ct"></div>
-  <div class="fr"><label>Phone</label><input type="tel" id="ecc-ph"></div>
-  <div class="fr"><label>Email</label><input type="email" id="ecc-em"></div>
-  <div class="fa">
-    <button class="btn bgh" onclick="closeM('m-edit-client-c')">Cancel</button>
-    <button class="btn bg" style="flex:1" onclick="saveEditClientC()">Save Changes</button>
-  </div>
-</div></div>
-
-<!-- Log Damage (Admin) -->
-<div class="mo" id="m-log-dmg-a"><div class="md">
-  <button class="mx" onclick="closeM('m-log-dmg-a')">✕</button>
-  <div class="mt2">LOG DAMAGE</div><div class="ms">Record pre-existing damage on a vehicle</div>
-  <div class="fr"><label>Vehicle</label><select id="da-vid"></select></div>
-  <div class="fr"><label>Damage Area</label>
-    <select id="da-area">
-      <option>Front Bumper</option><option>Rear Bumper</option><option>Driver Side Door</option>
-      <option>Passenger Side Door</option><option>Hood</option><option>Roof</option>
-      <option>Rear Panel</option><option>Windshield</option><option>Side Mirror</option>
-      <option>Interior — Dashboard</option><option>Interior — Seat</option><option>Interior — Floor</option>
-      <option>Wheel / Rim</option><option>Undercarriage</option><option>Other</option>
-    </select>
-  </div>
-  <div class="fr"><label>Description</label><textarea id="da-desc" placeholder="Describe the damage — severity, when noticed..."></textarea></div>
-  <div class="fr">
-    <label>Photos (Required)</label>
-    <div class="pz"><div class="pz-inner"><div class="pzi">📷</div><div class="pzt">Tap to add photos</div></div><input type="file" accept="image/*" multiple onchange="addP('da',this)"></div>
-    <div class="ppg" id="da-pp"></div>
-  </div>
-  <div class="fa">
-    <button class="btn bgh" onclick="closeM('m-log-dmg-a')">Cancel</button>
-    <button class="btn bg" style="flex:1" onclick="submitDmgA()">Log Damage</button>
-  </div>
-</div></div>
-
-<!-- Report Damage (Client) -->
 <div class="mo" id="m-log-dmg-c"><div class="md">
   <button class="mx" onclick="closeM('m-log-dmg-c')">✕</button>
   <div class="mt2">REPORT DAMAGE</div><div class="ms">Document pre-existing damage — GSD will acknowledge</div>
@@ -800,27 +496,25 @@ input,textarea,select,button{font-family:var(--fb);-webkit-appearance:none}
 // ═══════════════════════════════
 // STATE
 // ═══════════════════════════════
-const SUPA_URL='https://dgbuqrqzumnozxzgsero.supabase.co';
-const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRnYnVxcnF6dW1ub3p4emdzZXJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMDU3NzEsImV4cCI6MjA5Njg4MTc3MX0.LR04UcjUVtjOYMec973s2us42M7sOhImRs2sBb-fJwU';
-const APASS_DEFAULT='gsd2026';
+const JB_URL='https://api.jsonbin.io/v3/b/6a98f4be3919920ec4859051';
+const JB_KEY='$2a$10$jaBNXrBoHENhiCFuFwW9muhIyQ4bNYYkiTzN.Tr2WHj/MJakubvhu';
 
 function defState(){
-  return {adminPass:APASS_DEFAULT,actLog:[],clients:[]};
+  return {actLog:[],clients:[]};
 }
 
-// ── SUPABASE SYNC ──
+// ── JSONBIN SYNC ──
 async function loadFromCloud(){
   try{
-    const res=await fetch(SUPA_URL+'/rest/v1/portal_data?id=eq.main&select=data',{
-      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    const res=await fetch(JB_URL+'/latest',{
+      headers:{'X-Master-Key':JB_KEY,'X-Bin-Meta':'false'}
     });
-    const rows=await res.json();
-    if(rows&&rows[0]&&rows[0].data){
-      ST=rows[0].data;
-      // migrate: ensure adminPass exists
-      if(!ST.adminPass) ST.adminPass=APASS_DEFAULT;
-      if(!ST.actLog) ST.actLog=[];
-      if(!ST.clients) ST.clients=[];
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    if(data&&data.clients!==undefined){
+      ST=data;
+      if(!ST.actLog)    ST.actLog=[];
+      if(!ST.clients)   ST.clients=[];
       localStorage.setItem('gsd_fleet_v1',JSON.stringify(ST));
       return true;
     }
@@ -830,25 +524,20 @@ async function loadFromCloud(){
 
 async function saveToCloud(){
   try{
-    const now=new Date().toISOString();
-    await fetch(SUPA_URL+'/rest/v1/portal_data',{
-      method:'POST',
-      headers:{
-        'apikey':SUPA_KEY,
-        'Authorization':'Bearer '+SUPA_KEY,
-        'Content-Type':'application/json',
-        'Prefer':'resolution=merge-duplicates'
-      },
-      body:JSON.stringify({id:'main',data:ST,updated_at:now})
+    const res=await fetch(JB_URL,{
+      method:'PUT',
+      headers:{'X-Master-Key':JB_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify(ST)
     });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const now=new Date().toISOString();
     localStorage.setItem('gsd_last_cloud_save',now);
-    // Update last save display if settings page is open
     const el=document.getElementById('last-save-time');
-    if(el) el.textContent='Last cloud save: '+new Date(now).toLocaleString();
+    if(el) el.textContent='Last sync: '+new Date(now).toLocaleTimeString();
   }catch(e){
     console.warn('Cloud save failed:',e);
     const el=document.getElementById('last-save-time');
-    if(el) el.textContent='⚠️ Last cloud save failed — check connection';
+    if(el) el.textContent='⚠ Sync failed — check connection';
   }
 }
 
@@ -872,67 +561,9 @@ function save(){
   saveToCloud();
 }
 
-// ── AUTO-PING: hit Supabase every 72 hours to prevent free-tier project pause ──
-function startAutoPing(){
-  // Ping immediately on load, then every 72 hours
-  async function ping(){
-    try{
-      await fetch(SUPA_URL+'/rest/v1/portal_data?id=eq.main&select=updated_at',{
-        headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
-      });
-      console.log('Supabase ping OK —',new Date().toLocaleString());
-    }catch(e){console.warn('Ping failed:',e);}
-  }
-  ping();
-  setInterval(ping, 72*60*60*1000);
-}
-startAutoPing();
+// JSONBin — no keep-alive ping needed
 
 // ── EXPORT: download all data as a JSON backup file ──
-function exportBackup(){
-  const blob=new Blob([JSON.stringify(ST,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;
-  a.download='GSD-FleetPortal-Backup-'+new Date().toISOString().slice(0,10)+'.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  toast('Backup downloaded ✓','ok');
-  log('admin','Backup','Data exported to JSON');
-}
-
-// ── IMPORT: restore data from a JSON backup file ──
-function importBackup(){
-  const input=document.createElement('input');
-  input.type='file';
-  input.accept='.json';
-  input.onchange=async e=>{
-    const file=e.target.files[0];
-    if(!file) return;
-    try{
-      const text=await file.text();
-      const data=JSON.parse(text);
-      if(!data.clients||!Array.isArray(data.clients)){
-        toast('Invalid backup file','err'); return;
-      }
-      if(!confirm('This will replace ALL current data with the backup. Continue?')) return;
-      ST=data;
-      save();
-      toast('Backup restored — '+ST.clients.length+' clients loaded ✓','ok');
-      log('admin','Restore','Data imported from backup file');
-      renderDash();
-    }catch(err){
-      toast('Could not read backup file','err');
-      console.error(err);
-    }
-  };
-  input.click();
-}
-
-// Auto-refresh from cloud every 30 seconds (so everyone sees updates)
-let _refreshInterval=null;
 function startAutoRefresh(){
   if(_refreshInterval) clearInterval(_refreshInterval);
   _refreshInterval=setInterval(async()=>{
@@ -962,24 +593,6 @@ function startAutoRefresh(){
 // ═══════════════════════════════
 // AUTH
 // ═══════════════════════════════
-function ltab(t,el){
-  document.querySelectorAll('.ltab').forEach(x=>x.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('lf-a').style.display=t==='admin'?'':'none';
-  document.getElementById('lf-c').style.display=t==='client'?'':'none';
-}
-async function loginA(){
-  const p=document.getElementById('ap').value;
-  const btn=document.querySelector('#lf-a .btn-l');
-  if(btn){btn.textContent='Syncing...';btn.disabled=true;}
-  // Always pull latest from cloud before checking password
-  await loadFromCloud();
-  if(btn){btn.textContent='Sign In as Admin';btn.disabled=false;}
-  if(p!==ST.adminPass){toast('Incorrect password','err');log('admin','Failed Login','Wrong password');save();return;}
-  me='admin';log('admin','Login','Admin signed in');save();
-  showS('s-admin');renderDash();startAutoRefresh();
-  setTimeout(()=>{const n=document.getElementById('anav');if(n){n.scrollLeft=n.scrollWidth;setTimeout(()=>n.scrollLeft=0,500);}},700);
-}
 async function loginC(){
   const code=document.getElementById('cc').value.trim().toUpperCase();
   const btn=document.querySelector('#lf-c .btn-l');
@@ -997,10 +610,9 @@ async function loginC(){
 }
 function logout(){
   if(_refreshInterval){clearInterval(_refreshInterval);_refreshInterval=null;}
-  if(me) log(me,'Logout',me==='admin'?'Admin signed out':(myC?.name||me)+' signed out');
+  if(me) log(me,'Logout',(myC?.name||me)+' signed out');
   save();me=null;myC=null;selV=null;viewCid=null;
   showS('s-login');
-  document.getElementById('ap').value='';
   document.getElementById('cc').value='';
 }
 function showS(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
@@ -1008,51 +620,8 @@ function showS(id){document.querySelectorAll('.screen').forEach(s=>s.classList.r
 // ═══════════════════════════════
 // ADMIN PAGES
 // ═══════════════════════════════
-function ap(page,el){
-  document.querySelectorAll('#s-admin .pg').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('#anav .nt').forEach(t=>t.classList.remove('active'));
-  const pid=page==='cd'?'ap-cd':(page==='alerts'?'ap-dash':('ap-'+page));
-  document.getElementById(pid)?.classList.add('active');
-  if(el) el.classList.add('active');
-  else{const tabs=[...document.querySelectorAll('#anav .nt')];const m={dash:0,clients:1,requests:2,damages:3,settings:4};if(m[page]!==undefined)tabs[m[page]]?.classList.add('active');}
-  if(page==='dash')     renderDash();
-  if(page==='clients')  renderClients();
-  if(page==='alerts')   renderDash();
-  if(page==='requests') renderAllReq();
-  if(page==='damages')  renderAllDmg();
-  if(page==='settings') renderSettings();
-}
 
-function renderDash(){
-  const allV=ST.clients.flatMap(c=>c.vehicles);
-  const needs=allV.filter(v=>v.status==='needs_cleaning').length;
-  const dmg=ST.clients.flatMap(c=>c.damages).filter(d=>!d.acknowledged).length;
-  const req=ST.clients.flatMap(c=>c.requests).filter(r=>r.status==='pending').length;
-  document.getElementById('a-kpis').innerHTML=[
-    {l:'Clients',v:ST.clients.length,c:'var(--gold)'},
-    {l:'Needs Cleaning',v:needs,c:'var(--orange)'},
-    {l:'Unack. Damage',v:dmg,c:'var(--red)'},
-    {l:'Open Requests',v:req,c:'var(--blue)'},
-  ].map(k=>`<div class="card" style="${k.v>0&&k.c!=='var(--gold)'?'border-color:'+k.c+'40':''}">
-    <div class="kv" style="color:${k.c}">${k.v}</div><div class="kl">${k.l}</div></div>`).join('');
-  const alerts=getAlerts();
-  document.getElementById('a-ap').innerHTML=alerts.length?`<div class="leg"><div class="li"><div class="ld" style="background:var(--orange)"></div>Cleaning</div><div class="li"><div class="ld" style="background:var(--red)"></div>Damage</div><div class="li"><div class="ld" style="background:var(--blue)"></div>Request</div></div>`+alerts.map(a=>aRow(a,true)).join(''):`<div class="emp" style="padding:16px"><div class="ei">✅</div><div class="et">No active alerts — all fleets good</div></div>`;
-  const pr=ST.clients.flatMap(c=>c.requests.filter(r=>r.status==='pending').map(r=>({...r,cn:c.name,cid:c.id}))).slice(0,3);
-  document.getElementById('a-rp').innerHTML=pr.length?pr.map(r=>rCard({...r},true,true)).join(''):`<div class="emp" style="padding:16px"><div class="ei">📋</div><div class="et">No pending requests</div></div>`;
-}
 
-function renderClients(){
-  const el=document.getElementById('a-cl');
-  if(!ST.clients.length){el.innerHTML='<div class="emp"><div class="ei">👥</div><div class="et">No clients yet</div></div>';return;}
-  el.innerHTML=ST.clients.map(c=>{
-    const f=c.vehicles.filter(v=>v.status==='needs_cleaning').length+c.damages.filter(d=>!d.acknowledged).length+c.requests.filter(r=>r.status==='pending').length;
-    return `<div class="cr" onclick="viewClient('${c.id}')">
-      <div class="ca">${c.name[0].toUpperCase()}</div>
-      <div class="ci"><div class="cn2">${c.name}</div><div class="cm">${c.vehicles.length} vehicles · Code: <span style="color:var(--gold)">${c.code}</span></div></div>
-      <div class="cf"><div class="cfn" style="color:${f>0?'var(--red)':'var(--green)'}">${f}</div><div class="cfl">alerts</div></div>
-    </div>`;
-  }).join('');
-}
 
 function viewClient(id){
   viewCid=id;
@@ -1099,248 +668,6 @@ function viewClient(id){
 // ═══════════════════════════════
 // ALERTS
 // ═══════════════════════════════
-function getAlerts(){
-  const out=[];
-  ST.clients.forEach(c=>{
-    c.vehicles.filter(v=>v.status==='needs_cleaning').forEach(v=>out.push({type:'clean',cn:c.name,cid:c.id,vid:v.id,text:`${v.id} needs cleaning`,col:'orange',time:v.lastUpdated}));
-    c.damages.filter(d=>!d.acknowledged).forEach(d=>out.push({type:'dmg',cn:c.name,cid:c.id,did:d.id,vid:d.vehicleId,text:`Damage on ${d.vehicleId}: ${d.description.slice(0,45)}`,col:'red',time:d.createdAt}));
-    c.requests.filter(r=>r.status==='pending').forEach(r=>out.push({type:'req',cn:c.name,cid:c.id,rid:r.id,vid:r.vehicleId||'Fleet',text:`Request: ${r.type}`,col:'blue',time:r.createdAt}));
-  });
-  return out.sort((a,b)=>new Date(b.time)-new Date(a.time));
-}
-function aRow(a,showAct){
-  const cleanBtn=showAct&&a.type==='clean'?`<button class="btn bgr bsm" style="flex-shrink:0" onclick="markCleaned('${a.cid}','${a.vid}',event)">✓ Cleaned</button>`:'';
-  const ackBtn=showAct&&a.type==='dmg'?`<button class="btn bgh bsm" style="flex-shrink:0" onclick="ackDmg('${a.cid}','${a.did}',event)">Ack</button>`:'';
-  return `<div class="ar"><div class="ard" style="background:var(--${a.col})"></div>
-    <div style="flex:1;min-width:0"><div class="art">${a.text}</div><div class="arm">${a.cn} · ${a.time?new Date(a.time).toLocaleDateString():'Just now'}</div></div>
-    ${cleanBtn}${ackBtn}</div>`;
-}
-function renderAlerts(){document.getElementById('a-al').innerHTML=getAlerts().map(a=>aRow(a,true)).join('')||'<div class="emp"><div class="ei">✅</div><div class="et">All clear — no active alerts</div></div>';}
-function markCleaned(cid,vid,e){if(e)e.stopPropagation();const c=ST.clients.find(x=>x.id===cid);const v=c?.vehicles.find(x=>x.id===vid);if(!v)return;v.status='cleaning_done';v.lastUpdated=new Date().toISOString();log('admin','Marked Clean',`${vid} — ${c.name}`);save();renderDash();if(viewCid===cid)viewClient(cid);toast(`${vid} marked clean ✓`,'ok');}
-function ackDmg(cid,did,e){if(e)e.stopPropagation();const c=ST.clients.find(x=>x.id===cid);const d=c?.damages.find(x=>x.id===did);if(!d)return;d.acknowledged=true;d.acknowledgedAt=new Date().toISOString();log('admin','Ack Damage',`${d.vehicleId} — ${c.name}`);save();renderAllDmg();renderDash();if(viewCid===cid)viewClient(cid);toast('Damage acknowledged','ok');}
-function renderAllReq(){const all=ST.clients.flatMap(c=>c.requests.map(r=>({...r,cn:c.name,cid:c.id}))).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));document.getElementById('a-req').innerHTML=all.length?all.map(r=>rCard(r,true,false)).join(''):'<div class="emp"><div class="ei">📋</div><div class="et">No requests</div></div>';}
-function renderAllDmg(){const all=ST.clients.flatMap(c=>c.damages.map(d=>({...d,cn:c.name,cid:c.id}))).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));document.getElementById('a-dmg').innerHTML=all.length?all.map(d=>dCard(d,true,d.cid)).join(''):'<div class="emp"><div class="ei">🛡️</div><div class="et">No damage reports</div></div>';}
-
-// ═══════════════════════════════
-// CLIENTS CRUD
-// ═══════════════════════════════
-function addClient(){
-  const nm=document.getElementById('ac-nm').value.trim();
-  const code=document.getElementById('ac-cd').value.trim().toUpperCase();
-  if(!nm||!code){toast('Name and code required','err');return;}
-  if(ST.clients.find(c=>c.code===code)){toast('Code in use','err');return;}
-  ST.clients.push({
-    id:'c'+Date.now(),code,name:nm,
-    contact:document.getElementById('ac-ct').value.trim(),
-    phone:document.getElementById('ac-ph').value.trim(),
-    email:document.getElementById('ac-em').value.trim(),
-    contract:'',
-    monthlyRate:0,
-    nextPayment:'',
-    agreementNotes:'',disabled:false,
-    vehicles:[],damages:[],requests:[],payments:[],serviceHistory:[]
-  });
-  log('admin','Client Added',nm+' — code: '+code);
-  save();closeM('m-add-client');renderClients();
-  toast(`${nm} added · Code: ${code}`,'ok');
-}
-function openEditClient(){
-  const c=ST.clients.find(x=>x.id===viewCid); if(!c) return;
-  ['nm','ct','ph','em','cd'].forEach(k=>{const el=document.getElementById('eca-'+k);if(el)el.value=c[{nm:'name',ct:'contact',ph:'phone',em:'email',cd:'code'}[k]]||'';});
-  document.getElementById('eca-co').value=c.contract;
-  document.getElementById('eca-rt').value=c.monthlyRate||'';
-  document.getElementById('eca-pd').value=c.nextPayment||'';
-  document.getElementById('eca-ag').value=c.agreementNotes||'';
-  openM('m-edit-client-a');
-}
-function saveEditClient(){
-  const c=ST.clients.find(x=>x.id===viewCid); if(!c) return;
-  c.name=document.getElementById('eca-nm').value.trim();
-  c.contact=document.getElementById('eca-ct').value.trim();
-  c.phone=document.getElementById('eca-ph').value.trim();
-  c.email=document.getElementById('eca-em').value.trim();
-  c.code=document.getElementById('eca-cd').value.trim().toUpperCase();
-  c.contract=document.getElementById('eca-co').value;
-  c.monthlyRate=parseFloat(document.getElementById('eca-rt').value)||0;
-  c.nextPayment=document.getElementById('eca-pd').value;
-  c.agreementNotes=document.getElementById('eca-ag').value.trim();
-  log('admin','Client Edited',c.name);
-  save();closeM('m-edit-client-a');viewClient(c.id);toast('Client updated','ok');
-}
-function deleteClient(){
-  if(!confirm('Delete this client and all their data?')) return;
-  ST.clients=ST.clients.filter(c=>c.id!==viewCid);
-  log('admin','Client Deleted','cid:'+viewCid);
-  save();closeM('m-edit-client-a');ap('clients',null);toast('Client deleted','ok');
-}
-
-// ═══════════════════════════════
-// VEHICLES
-// ═══════════════════════════════
-function vCard(v,isAdmin){
-  const cid=isAdmin?viewCid:(myC?.id);
-  const c=ST.clients.find(x=>x.id===cid);
-  const dmg=c?.damages.filter(d=>d.vehicleId===v.id&&!d.acknowledged).length||0;
-  const req=c?.requests.filter(r=>r.vehicleId===v.id&&r.status==='pending').length||0;
-  let sc='',st='',sp='pgr';
-  if(v.status==='needs_cleaning'){sc='needs_cleaning';st='Needs Clean';sp='pn';}
-  else if(v.status==='can_wait'){sc='can_wait';st='Can Wait';sp='pw';}
-  else if(v.status==='cleaning_done'){sc='cleaning_done';st='Clean ✓';sp='pa';}
-  const typeShort=v.type.includes('EDV')?'EDV':v.type.includes('XL')?'XL':v.type.split(' ')[0];
-  return `<div class="vc ${sc}" onclick="openV('${v.id}',${isAdmin})">
-    <div class="vct">${typeShort}</div>
-    <div class="vci">${v.id}</div>
-    ${v.plate?`<div class="vcp">${v.plate}</div>`:''}
-    ${st?`<div class="vbs mt8"><span class="pi ${sp}">${st}</span></div>`:''}
-    <div class="vbs mt8">
-      ${v.photos?.length?`<span class="vb" style="background:rgba(201,168,76,.15);color:var(--gold)">📷${v.photos.length}</span>`:''}
-      ${dmg?`<span class="vb" style="background:var(--rd);color:var(--red)">⚠️${dmg}</span>`:''}
-      ${req?`<span class="vb" style="background:var(--bd);color:var(--blue)">📋${req}</span>`:''}
-    </div>
-  </div>`;
-}
-function openV(vid,isAdmin){
-  selVIsAdmin=isAdmin;
-  const c=isAdmin?ST.clients.find(x=>x.id===viewCid):myC; if(!c) return;
-  selV=c.vehicles.find(v=>v.id===vid); if(!selV) return;
-  document.getElementById('mv-id').textContent=selV.id;
-  document.getElementById('mv-tp').textContent=selV.type;
-  document.getElementById('mv-vid2').textContent=selV.id;
-  document.getElementById('mv-plt').textContent=selV.plate||'Not set';
-  document.getElementById('mv-typ2').textContent=selV.type;
-  document.getElementById('mv-nt2').textContent=selV.notes||'—';
-  document.getElementById('mv-notes').value=selV.notes||'';
-  document.getElementById('mv-rm').style.display='inline-flex';
-  document.getElementById('mv-edit-btn').style.display='flex';
-  tmp.v=[...(selV.photos||[])];
-  renderPP('vpp','v');
-  ['mk-n','mk-w','mk-d'].forEach(id=>document.getElementById(id).classList.remove('sel'));
-  if(selV.status==='needs_cleaning')document.getElementById('mk-n').classList.add('sel');
-  if(selV.status==='can_wait')document.getElementById('mk-w').classList.add('sel');
-  if(selV.status==='cleaning_done')document.getElementById('mk-d').classList.add('sel');
-  selV._ps=undefined;
-  openM('m-v');
-}
-function setVS(s){
-  ['mk-n','mk-w','mk-d'].forEach(id=>document.getElementById(id).classList.remove('sel'));
-  if(s==='needs_cleaning')document.getElementById('mk-n').classList.add('sel');
-  if(s==='can_wait')document.getElementById('mk-w').classList.add('sel');
-  if(s==='cleaning_done')document.getElementById('mk-d').classList.add('sel');
-  if(selV)selV._ps=s;
-}
-function saveV(){
-  if(!selV) return;
-  if(selV._ps!==undefined){selV.status=selV._ps;delete selV._ps;}
-  selV.notes=document.getElementById('mv-notes').value;
-  selV.photos=[...tmp.v];
-  selV.lastUpdated=new Date().toISOString();
-  log(me,'Vehicle Updated',selV.id);
-  save();closeM('m-v');
-  if(selVIsAdmin)viewClient(viewCid); else renderCFleet();
-  toast('Vehicle saved','ok');
-}
-function openEditVehicle(){
-  if(!selV) return;
-  document.getElementById('ev-id').value=selV.id;
-  document.getElementById('ev-plt').value=selV.plate||'';
-  document.getElementById('ev-typ').value=selV.type;
-  document.getElementById('ev-nt').value=selV.notes||'';
-  openM('m-ev');
-}
-function saveEditV(){
-  if(!selV) return;
-  // Get fresh client reference
-  const c=selVIsAdmin
-    ? ST.clients.find(x=>x.id===viewCid)
-    : (myC ? ST.clients.find(x=>x.id===myC.id) : null);
-  if(!c){toast('Could not find fleet — try again','err');return;}
-  // Find the vehicle in ST directly
-  const v=c.vehicles.find(x=>x.id===selV.id);
-  if(!v){toast('Vehicle not found','err');return;}
-  const newId=document.getElementById('ev-id').value.trim();
-  v.id=newId||v.id;
-  v.plate=document.getElementById('ev-plt').value.trim().toUpperCase();
-  v.type=document.getElementById('ev-typ').value;
-  v.notes=document.getElementById('ev-nt').value.trim();
-  selV=v;
-  if(!selVIsAdmin) myC=c;
-  document.getElementById('mv-id').textContent=v.id;
-  document.getElementById('mv-vid2').textContent=v.id;
-  document.getElementById('mv-plt').textContent=v.plate||'Not set';
-  document.getElementById('mv-typ2').textContent=v.type;
-  document.getElementById('mv-nt2').textContent=v.notes||'—';
-  log(me,'Vehicle Edited',v.id);
-  save();closeM('m-ev');
-  if(selVIsAdmin) viewClient(viewCid); else renderCFleet();
-  toast('Vehicle updated ✓','ok');
-}
-function removeV(){
-  if(!selV) return;
-  if(!confirm('Remove '+selV.id+' from fleet?')) return;
-  // Get fresh client reference — myC can become stale after cloud sync
-  const c = selVIsAdmin
-    ? ST.clients.find(x=>x.id===viewCid)
-    : (myC ? ST.clients.find(x=>x.id===myC.id) : null);
-  if(!c){toast('Could not find fleet — try again','err');return;}
-  c.vehicles = c.vehicles.filter(v=>v.id!==selV.id);
-  // Keep myC in sync
-  if(!selVIsAdmin) myC = c;
-  log(me,'Vehicle Removed', selV.id + (selVIsAdmin?' from '+c.name:''));
-  save();
-  closeM('m-v');
-  if(selVIsAdmin) viewClient(viewCid);
-  else renderCFleet();
-  toast(selV.id+' removed','ok');
-}
-function addVA(){
-  const c=ST.clients.find(x=>x.id===viewCid); if(!c) return;
-  const id=document.getElementById('ava-id').value.trim();
-  if(!id){toast('ID required','err');return;}
-  if(c.vehicles.find(v=>v.id===id)){toast('ID exists','err');return;}
-  c.vehicles.push({id,plate:document.getElementById('ava-plt').value.trim().toUpperCase(),type:document.getElementById('ava-typ').value,notes:document.getElementById('ava-nt').value.trim(),status:'no_status',photos:[],lastUpdated:null});
-  log('admin','Vehicle Added',id+' to '+c.name);
-  save();closeM('m-av-a');viewClient(viewCid);
-  ['ava-id','ava-plt','ava-nt'].forEach(x=>document.getElementById(x).value='');
-  toast(id+' added','ok');
-}
-function addVC(){
-  const c=myC; if(!c) return;
-  const id=document.getElementById('avc-id').value.trim();
-  if(!id){toast('ID required','err');return;}
-  if(c.vehicles.find(v=>v.id===id)){toast('ID exists','err');return;}
-  c.vehicles.push({id,plate:document.getElementById('avc-plt').value.trim().toUpperCase(),type:document.getElementById('avc-typ').value,notes:document.getElementById('avc-nt').value.trim(),status:'no_status',photos:[],lastUpdated:null});
-  log(me,'Vehicle Added',id);
-  save();closeM('m-av-c');renderCFleet();
-  ['avc-id','avc-plt','avc-nt'].forEach(x=>document.getElementById(x).value='');
-  toast(id+' added','ok');
-}
-
-// ═══════════════════════════════
-// DAMAGE
-// ═══════════════════════════════
-function dCard(d,isAdmin,cid){
-  const photos=(d.photos||[]).map(p=>`<img class="iph" src="${p}" onclick="lb('${p}')">`).join('');
-  return `<div class="ic dmg ${d.acknowledged?'ack':''}">
-    <div class="ih">
-      <div><div class="it">${d.vehicleId} — ${d.area||''}${d.cn?' · '+d.cn:''}</div><div class="im">${new Date(d.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div></div>
-      ${d.acknowledged?`<span class="pi pak">✓ Ack</span>`:`<span class="pi pp">Pending</span>`}
-    </div>
-    <div class="ib">${d.description}</div>
-    ${photos?`<div class="ips">${photos}</div>`:''}
-    ${isAdmin&&!d.acknowledged?`<div class="ia"><button class="btn bgr bsm" onclick="ackDmg('${cid}','${d.id}',null)">✓ Acknowledge</button></div>`:''}
-    ${d.acknowledged?`<div style="font-size:.68rem;color:var(--green);margin-top:6px;font-family:var(--fm)">Ack'd ${new Date(d.acknowledgedAt).toLocaleDateString()}</div>`:''}
-  </div>`;
-}
-function submitDmgA(){
-  const c=ST.clients.find(x=>x.id===viewCid); if(!c) return;
-  const vid=document.getElementById('da-vid').value;
-  const desc=document.getElementById('da-desc').value.trim();
-  if(!desc){toast('Describe the damage','err');return;}
-  c.damages.push({id:'d'+Date.now(),vehicleId:vid,area:document.getElementById('da-area').value,description:desc,photos:[...tmp.da],acknowledged:false,createdAt:new Date().toISOString()});
-  tmp.da=[];document.getElementById('da-pp').innerHTML='';document.getElementById('da-desc').value='';
-  log('admin','Damage Logged',vid+' — '+c.name);
-  save();closeM('m-log-dmg-a');viewClient(viewCid);toast('Damage logged','ok');
-}
 function submitDmgC(){
   const c=myC; if(!c) return;
   const vid=document.getElementById('dc-vid').value;
@@ -1354,44 +681,6 @@ function submitDmgC(){
 
 // ═══════════════════════════════
 // REQUESTS
-// ═══════════════════════════════
-function rCard(r,isAdmin,compact){
-  const photos=(r.photos||[]).map(p=>`<img class="iph" src="${p}" onclick="lb('${p}')">`).join('');
-  const badge=r.status==='pending'?`<span class="pi pp">Pending</span>`:r.status==='approved'?`<span class="pi pa">Approved</span>`:r.status==='complete'?`<span class="pi pc">✅ Complete</span>`:`<span class="pi pde">Denied</span>`;
-  const adminBtns=isAdmin&&r.status==='pending'?`<div class="ia"><button class="btn bgr bsm" onclick="respReq('${r.cid}','${r.id}','approved')">Approve</button><button class="btn bre bsm" onclick="respReq('${r.cid}','${r.id}','denied')">Deny</button></div>`:'';
-  const compBtn=isAdmin&&r.status==='approved'?`<div class="ia"><button class="btn bbl bsm" onclick="respReq('${r.cid}','${r.id}','complete')">✅ Mark Complete</button></div>`:'';
-  const vLabel=Array.isArray(r.vehicles)&&r.vehicles.length?r.vehicles.join(', '):(r.vehicleId||'Fleet');
-  return `<div class="ic req ${r.status==='complete'?'done':''}">
-    <div class="ih">
-      <div><div class="it">${r.type} — ${vLabel}${!compact&&r.cn?' · '+r.cn:''}</div><div class="im">${new Date(r.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div></div>
-      ${badge}
-    </div>
-    <div class="ib">${r.description}</div>
-    ${photos?`<div class="ips">${photos}</div>`:''}
-    ${adminBtns}${compBtn}
-  </div>`;
-}
-function submitReq(){
-  const c=myC; if(!c) return;
-  const typ=document.getElementById('req-typ').value;
-  const desc=document.getElementById('req-desc').value.trim();
-  if(!desc){toast('Describe what you need','err');return;}
-  const checks=[...document.querySelectorAll('#req-v-checks input:checked')].map(i=>i.value);
-  c.requests.push({id:'r'+Date.now(),vehicles:checks,vehicleId:checks[0]||'',type:typ,description:desc,photos:[...tmp.rq],status:'pending',createdAt:new Date().toISOString()});
-  tmp.rq=[];document.getElementById('rq-pp').innerHTML='';document.getElementById('req-desc').value='';
-  log(me,'Request Submitted',typ);
-  save();closeM('m-req');renderCHistory();toast('Request submitted','ok');
-}
-function respReq(cid,rid,status){
-  const c=ST.clients.find(x=>x.id===cid);const r=c?.requests.find(x=>x.id===rid);if(!r)return;
-  r.status=status;r.respondedAt=new Date().toISOString();
-  log('admin','Request '+status.charAt(0).toUpperCase()+status.slice(1),r.type+' — '+c.name);
-  save();renderAllReq();renderDash();if(viewCid===cid)viewClient(cid);
-  toast({approved:'Approved!',denied:'Denied',complete:'Marked complete ✅'}[status]||'Updated','ok');
-}
-
-// ═══════════════════════════════
-// CLIENT PAGES
 // ═══════════════════════════════
 function cp(page,el){
   document.querySelectorAll('#s-client .pg').forEach(p=>p.classList.remove('active'));
@@ -1541,71 +830,6 @@ function logService(){
 // ═══════════════════════════════
 // SETTINGS
 // ═══════════════════════════════
-function renderSettings(){
-  const el=document.getElementById('last-save-time');
-  if(el){
-    const last=localStorage.getItem('gsd_last_cloud_save');
-    el.textContent=last?'Last cloud save: '+new Date(last).toLocaleString():'Last cloud save: not recorded on this device';
-  }
-  document.getElementById('s-ac').innerHTML=ST.clients.map(c=>`
-    <div class="set-row">
-      <div><div style="font-size:.88rem;font-weight:600">${c.name}</div><div style="font-family:var(--fm);font-size:.62rem;color:var(--t3)">Code: ${c.code}</div></div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="pi ${c.disabled?'pde':'pa'}">${c.disabled?'Disabled':'Active'}</span>
-        <button class="btn ${c.disabled?'bgr':'bre'} bsm" onclick="toggleAccess('${c.id}')">${c.disabled?'Enable':'Disable'}</button>
-      </div>
-    </div>`).join('')||'<div style="color:var(--t3);font-size:.8rem">No clients</div>';
-  document.getElementById('s-codes').innerHTML=`<div style="background:var(--s3);border-radius:var(--r);overflow:hidden;border:1px solid var(--border)">
-    ${ST.clients.map(c=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--border)">
-      <div style="font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;margin-right:10px">${c.name}</div>
-      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-        <span style="font-family:var(--fm);color:var(--gold);font-size:.82rem">${c.code}</span>
-        <button class="btn bgh bsm" style="padding:3px 8px;font-size:.62rem" onclick="cpCode('${c.code}')">Copy</button>
-        <span class="pi ${c.disabled?'pde':'pa'}" style="font-size:.58rem">${c.disabled?'Off':'On'}</span>
-      </div>
-    </div>`).join('')}
-  </div>`;
-  const log2=ST.actLog||[];
-  document.getElementById('s-log').innerHTML=log2.length
-    ?log2.map(l=>`<div class="act-entry"><div class="act-time">${new Date(l.ts).toLocaleString('en-US',{month:'numeric',day:'numeric',hour:'numeric',minute:'2-digit'})}</div><div><div style="font-size:.78rem;font-weight:600">${l.action}</div><div style="font-size:.72rem;color:var(--t2)">${l.detail}</div><div style="font-family:var(--fm);font-size:.58rem;color:var(--t3)">${l.user}</div></div></div>`).join('')
-    :'<div style="color:var(--t3);font-size:.8rem;padding:10px 0">No activity yet</div>';
-}
-function toggleAccess(cid){const c=ST.clients.find(x=>x.id===cid);if(!c)return;c.disabled=!c.disabled;log('admin',c.disabled?'Access Disabled':'Access Enabled',c.name);save();renderSettings();toast(c.name+' '+(c.disabled?'disabled':'enabled'),c.disabled?'err':'ok');}
-function chgPass(){
-  const cur=document.getElementById('scp').value,nw=document.getElementById('snp').value,cf=document.getElementById('scp2').value;
-  if(cur!==ST.adminPass){toast('Wrong current password','err');return;}
-  if(nw.length<4){toast('Too short','err');return;}
-  if(nw!==cf){toast("Passwords don't match",'err');return;}
-  ST.adminPass=nw;log('admin','Password Changed','Admin password updated');save();
-  ['scp','snp','scp2'].forEach(x=>document.getElementById(x).value='');
-  toast('Password updated','ok');
-}
-function cpCode(code){navigator.clipboard.writeText(code).then(()=>toast('Copied: '+code,'ok')).catch(()=>toast('Code: '+code,'ok'));}
-async function manualSync(){
-  const el=document.getElementById('sync-status');
-  if(el) el.textContent='Syncing...';
-  const ok=await loadFromCloud();
-  if(ok){
-    if(me&&me!=='admin') myC=ST.clients.find(x=>x.code===me)||null;
-    const activePg=document.querySelector('#s-admin .pg.active');
-    if(activePg){
-      if(activePg.id==='ap-dash') renderDash();
-      else if(activePg.id==='ap-clients') renderClients();
-      else if(activePg.id==='ap-cd'&&viewCid) viewClient(viewCid);
-      else if(activePg.id==='ap-requests') renderAllReq();
-      else if(activePg.id==='ap-damages') renderAllDmg();
-      else if(activePg.id==='ap-settings') renderSettings();
-    }
-    if(el) el.textContent='✓ Synced · Admin';
-    setTimeout(()=>{if(el) el.textContent='Admin · Christ Pierre';},2000);
-    toast('Synced from cloud ✓','ok');
-  } else {
-    if(el) el.textContent='Admin · Christ Pierre';
-    toast('Sync failed — check connection','err');
-  }
-}
-
-function exportData(){exportBackup();}
 function resetPortal(){if(!confirm('Reset ALL portal data? Cannot be undone.'))return;localStorage.removeItem('gsd_fleet_v1');ST=defState();save();toast('Portal reset','ok');logout();}
 
 // ═══════════════════════════════
